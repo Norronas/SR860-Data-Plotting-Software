@@ -24,19 +24,18 @@ def complex_quadrature(func, a, b, **kwargs):
     #return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
 
 
-def point_calculation(R, I, l, b, k, rho, cp):
+def point_calculation(R, I, l, b, k, rho, cp, fonction):
     freq = MIN_FREQUECY
     decade_mult = 1
     prms = (R * I**2)/l
     alpha = (k/(rho * cp)) 
-    q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha) 
-    fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
+    q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
-            q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha) 
+            q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
             fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
             result = complex_quadrature(fonction, 0 , MAX_INTEGRATE)
-            frequency_list.append(freq)
+            frequency_list.append(np.log(4*np.pi*freq))
             real_result_list.append(np.real(result))
             imag_result_list.append(np.imag(result))
             print(str(freq) + "    " + str(result))
@@ -47,8 +46,8 @@ def point_calculation(R, I, l, b, k, rho, cp):
 def plot_result(x, y, z):
     plt.plot(x, y)
     plt.plot(x, z)
-    plt.xlabel("Frequency")
-    plt.xscale('log')
+    plt.xlabel("Frequency (ln(2w))")
+    #plt.xscale('log')
     plt.ylabel("Delta")
     plt.title("Méthode 3-omega")
     plt.show()
@@ -81,9 +80,14 @@ alpha = (k/(rho * cp))
 q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha) 
 fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
 
-point_calculation(R,I,l,b,k,rho,cp)
-plot_result(frequency_list,real_result_list, imag_result_list)
+#fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
+#AUTRE METHODE
+constante = (-prms/(cmath.pi*k))
+A1 = -1
+B1 = lambda nu : (cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) 
+fonction2 = lambda nu : (constante * ((1/A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))))*((cmath.sin(nu*b)**2)/(b*nu)**2))) #REMPLACER B1 PAR SA FONCTION 
+print(complex_quadrature(fonction2, 0, MAX_INTEGRATE))
 
-#print("alpha :" + str(alpha))
-#print("q :" + str(q))
-#print(complex_quadrature(fonction, 0 , 10000000))
+#point_calculation(R,I,l,b,k,rho,cp, fonction)
+#plot_result(frequency_list,real_result_list, imag_result_list)
+
