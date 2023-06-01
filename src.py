@@ -81,13 +81,17 @@ q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
 fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
 
 #fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
+
+
 #AUTRE METHODE
 constante = (-prms/(cmath.pi*k))
 A1 = -1
 B1 = lambda nu : (cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) 
-fonction2 = lambda nu : (constante * ((1/A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))))*((cmath.sin(nu*b)**2)/(b*nu)**2))) #REMPLACER B1 PAR SA FONCTION 
-print(complex_quadrature(fonction2, 0, MAX_INTEGRATE))
+fonction2 = lambda nu : ((1/(A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2)) #REMPLACER B1 PAR SA FONCTION 
+result = constante * complex_quadrature(fonction2, 0, MAX_INTEGRATE)
+print(result)
 
 #point_calculation(R,I,l,b,k,rho,cp, fonction)
+
 #plot_result(frequency_list,real_result_list, imag_result_list)
 
