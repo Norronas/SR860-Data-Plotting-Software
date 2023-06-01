@@ -47,7 +47,6 @@ def plot_result(x, y, z):
     plt.plot(x, y)
     plt.plot(x, z)
     plt.xlabel("Frequency (ln(2w))")
-    #plt.xscale('log')
     plt.ylabel("Delta")
     plt.title("Méthode 3-omega")
     plt.show()
