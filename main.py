@@ -27,9 +27,6 @@ def complex_quadrature(func, a, b, **kwargs):
 
 def point_calculation(R, I, l, b, k, rho, cp, window):
     freq = MIN_FREQUECY
-    # global frequency_list
-    # global real_result_list
-    # global imag_result_list
     frequency_list = []
     real_result_list = []
     imag_result_list = []
@@ -50,11 +47,10 @@ def point_calculation(R, I, l, b, k, rho, cp, window):
             frequency_list.append(np.log(4*np.pi*freq))
             real_result_list.append(np.real(result))
             imag_result_list.append(np.imag(result))
-            print(str(freq) + "    " + str(result))
             freq = (i+1) * decade_mult
         decade_mult *= 10
-        graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
-        #print(decade_mult)
+        print(real_result_list)
+    graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
 
 #Parameter to integrate
@@ -88,7 +84,6 @@ def point_calculation(R, I, l, b, k, rho, cp, window):
 # print(result)
 
 def main():
-    print("MAIN")
     nu = smp.symbols('nu', real=True)
     
     window = graphics.Window()

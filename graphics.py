@@ -8,9 +8,10 @@ import main
 
 #Constantes
 HEIGHT = 700
-WIDTH = 1200
 HEIGHT_FRAME = 700
-WIDTH_FRAME = 350
+WIDTH_FRAME = 200
+WIDTH = 1200
+WIDTH_ENTRY = 12
 BACKGROUND_MAIN_FRAME = "#6dd5db" #Coueur hexa
 BACKGROUND_SECOND_FRAME = "#8fe6eb"
 BACKGROUND_ENTRY = "#ffffff"
@@ -28,6 +29,7 @@ class Window(tk.Tk):
         self.title('Application MITEC')
         self.geometry("1200x700")
         self.widgets_init()
+        self.init_canvas()
 
     def widgets_init(self):
         self.mode = tk.StringVar()
@@ -50,49 +52,49 @@ class Window(tk.Tk):
         self.resistance_label = tk.Label(self.main_frame, text="Resistance (Ω)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.resistance_label.grid(row=0, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
 
-        self.resistance_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.resistance_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.resistance_entry.grid(row=0, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='sw')
 
         #Current widgets
         self.current_label = tk.Label(self.main_frame, text="Current (A)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.current_label.grid(row=1, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.current_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.current_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.current_entry.grid(row=1, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Lenght widgets
         self.length_label = tk.Label(self.main_frame, text="Length ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.length_label.grid(row=2, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.length_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.length_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.length_entry.grid(row=2, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Width widgets
         self.width_label = tk.Label(self.main_frame, text="Width ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.width_label.grid(row=3, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.width_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.width_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.width_entry.grid(row=3, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Thermal Conductivity widgets
         self.thermal_cond_label = tk.Label(self.main_frame, text="Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thermal_cond_label.grid(row=4, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.thermal_cond_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.thermal_cond_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.thermal_cond_entry.grid(row=4, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Density widgets
         self.density_label = tk.Label(self.main_frame, text="Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.density_label.grid(row=5, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.density_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.density_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.density_entry.grid(row=5, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Heat Capacity widgets
         self.heat_capa_label = tk.Label(self.main_frame, text="Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.heat_capa_label.grid(row=6, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.heat_capa_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY)
+        self.heat_capa_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.heat_capa_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Select Simulation
@@ -113,36 +115,59 @@ class Window(tk.Tk):
 
         #Simulation Button
         self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, self))
-        # self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:src.point_calculation(float(self.resistance_entry.get()),
+        # self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:main.point_calculation(float(self.resistance_entry.get()),
         #                                                                                                                                                            float(self.current_entry.get()),
         #                                                                                                                                                            float(self.length_entry.get()),
         #                                                                                                                                                            float(self.width_entry.get())/2,
         #                                                                                                                                                            float(self.thermal_cond_entry.get()),
         #                                                                                                                                                            float(self.density_entry.get()),
-        #                                                                                                                                                            float(self.heat_capa_entry.get())))
+        #                                                                                                                                                            float(self.heat_capa_entry.get()),
+        #                                                                                                                                                            self))
         self.simu_button.grid(row=10, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='s')
 
-    def canvas_draw(self, freq, reel, imag):
-        figure_plot = Figure(figsize=(10,10), dpi = 100)
-        figure_axis = figure_plot.add_subplot(111)
-        figure_one = figure_axis.plot(freq, reel)
-        figure_two = figure_axis.plot(freq, imag)
-        figure_axis.set_xlabel("Frequency (ln(2w))")
-        figure_axis.grid()
-        #figure_plot.legend((figure_one, figure_two), ('Reel', 'Imaginary'), 'upper right')
+        #Clear Button
+        # self.clear_button = tk.Button(self.main_frame, text="Clear Plot", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: self.clear_canvas())
+        # self.clear_button.grid(row=10, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='s')
+    
+    def init_canvas(self):
+        self.figure_plot = Figure(figsize=(6,6), dpi = 100) 
+        self.figure_axis = self.figure_plot.add_subplot(111)
+        self.figure_axis.set_xlabel("Frequency (ln(2w))")
+        self.figure_axis.set_autoscalex_on(True)
+        self.figure_axis.grid()
 
-        self.canvas = FigureCanvasTkAgg(figure_plot, self.second_frame)
+        self.canvas = FigureCanvasTkAgg(self.figure_plot, self.second_frame)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.canvas.draw()
 
         toolbar_plot = NavigationToolbar2Tk(self.canvas, self.second_frame)
         toolbar_plot.update()
         self.canvas._tkcanvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+    def canvas_draw(self, freq, reel, imag):
+        figure_one = self.figure_axis.plot(freq, reel)
+        figure_two = self.figure_axis.plot(freq, imag)
+        self.figure_axis.grid()
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.canvas.draw()
+        #figure_plot.legend((figure_one, figure_two), ('Reel', 'Imaginary'), 'upper right')
+
+
+        #self.canvas.draw()
+
     
     def get_value_mode(self):
         value_mode = self.mode.get()
-        print(value_mode)
         return value_mode
+    
+    def clear_canvas(self):
+        self.figure_plot.clear()
+        self.figure_plot.add_subplot(111)         
+        self.canvas.draw_idle()
+        self.figure_axis.grid()
+        # for item in self.canvas.get_tk_widget().find_all():
+        #     self.canvas.get_tk_widget().delete(item)
+        # self.toolbar_plot.get_tk_widget().delete()
+
 
 # def main():
 #     window = Window()
