@@ -12,7 +12,7 @@ MAX_FREQUENCY = 1000000
 MAX_LIST = 1000
 DECADE = 10
 
-#Comes from https://stackoverflow.com/questions/5965583/use-scipy-integrate-quad-to-integrate-complex-numbers but modified by me
+'''Comes from https://stackoverflow.com/questions/5965583/use-scipy-integrate-quad-to-integrate-complex-numbers but modified by me'''
 def complex_quadrature(func, a, b, **kwargs):
     def real_func(x):
         return np.real(func(x))
@@ -21,15 +21,10 @@ def complex_quadrature(func, a, b, **kwargs):
     real_integral = quad(real_func, a, b, **kwargs)
     imag_integral = quad(imag_func, a, b, **kwargs)
     return(complex(real_integral[0] , imag_integral[0]))
-    #return (real_integral[0] + 1j*imag_integral[0])
     #return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
 
 
 def point_calculation(R, I, l, b, k, rho, cp, T, window):
-    print("1")
-    # if(zero_verification(l, k, rho, cp, window) == 0):
-    #     print("2")
-    #     return
     freq = MIN_FREQUECY
     frequency_list = []
     real_result_list = []
@@ -53,9 +48,6 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
                 # A1 = (-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))
                 fonction = lambda nu : ((1/((-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
-            #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
-            #fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
-            #result = complex_quadrature(fonction, 0 , MAX_INTEGRATE)
             frequency_list.append(np.log(4*np.pi*freq))
             real_result_list.append(np.real(result))
             imag_result_list.append(np.imag(result))
@@ -65,6 +57,7 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
     graphics.Window.modify_status(window, 1)
     graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
+
 def zero_verification(l, k, rho, cp, window):
     point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, window)
     if(l == "" or k == "" or rho == "" or cp == ""):
@@ -72,7 +65,6 @@ def zero_verification(l, k, rho, cp, window):
         return 0
     elif(float(l) == 0 or float(k) == 0 or float(rho) == 0 or float(cp) == 0):
         graphics.Window.modify_status(window, 3)
-        print("AIEIIIE")
         return 0
     else:
         point_calculation(float(window.resistance_entry.get()),
