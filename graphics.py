@@ -17,11 +17,12 @@ BACKGROUND_SECOND_FRAME = "#8fe6eb"
 BACKGROUND_ENTRY = "#ffffff"
 RELIEF = tk.GROOVE
 FONT = "Helvetica"
-FONT_SIZE = 14
+FONT_SIZE = 13
 BORDERWIDTH = 7
 PADY_WIDGETS = 5 
 PADX_WIDGETS = 5
-MAX_ROW = 10
+MAX_ROW = 15
+MAX_COLUMN = 2
 
 class Window(tk.Tk):
     def __init__(self):
@@ -33,13 +34,14 @@ class Window(tk.Tk):
 
     def widgets_init(self):
         self.mode = tk.StringVar()
+        self.var_status = tk.StringVar()
         self.mode.set(1)
     
         self.main_frame = tk.Frame(self, height = HEIGHT_FRAME, width = WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_rowconfigure(MAX_ROW, weight=1)
         self.main_frame.grid_columnconfigure(0, weight=1)
-        self.main_frame.grid_columnconfigure(MAX_ROW, weight=1)
+        self.main_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
         self.main_frame.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
 
         self.second_frame = tk.Frame(self, height = HEIGHT - HEIGHT_FRAME, width = WIDTH - WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_SECOND_FRAME)
@@ -97,24 +99,36 @@ class Window(tk.Tk):
         self.heat_capa_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.heat_capa_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
+        #Thickness widgets
+        self.thickness_label = tk.Label(self.main_frame, text="Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.thickness_label.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+
+        self.thickness_entry = tk.Entry(self.main_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thickness_entry.grid(row=7, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+
+        #Status Label
+        self.var_status.set("Status : Enter parameters")
+        self.thickness_label = tk.Label(self.main_frame, textvariable=self.var_status, font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.thickness_label.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+
         #Select Simulation
         
         self.first_mode = tk.Radiobutton(self.main_frame, text="Semi-Infinite Substrate", variable = self.mode, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_MAIN_FRAME,  indicatoron=0, command=lambda:self.get_value_mode())
         self.first_mode.deselect()
-        self.first_mode.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+        self.first_mode.grid(row=9, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         self.second_mode = tk.Radiobutton(self.main_frame, text="Finite Substrate Adiabaticisothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_MAIN_FRAME,  indicatoron=0, command=lambda:self.get_value_mode())
         self.second_mode.deselect()
-        self.second_mode.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+        self.second_mode.grid(row=10, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         self.third_mode = tk.Radiobutton(self.main_frame, text="Finite Substrate Isothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_MAIN_FRAME, indicatoron=0, command=lambda:self.get_value_mode())
         self.third_mode.deselect()
-        self.third_mode.grid(row=9, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
+        self.third_mode.grid(row=11, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
         
         #bouton = tk.Radiobutton(Frame1, variable=variable, text=wafers[i], value=i, background=BACKGROUND, indicatoron=0, command=afficher )
 
         #Simulation Button
-        self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, self))
+        #self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, self))
         # self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:main.point_calculation(float(self.resistance_entry.get()),
         #                                                                                                                                                            float(self.current_entry.get()),
         #                                                                                                                                                            float(self.length_entry.get()),
@@ -122,8 +136,14 @@ class Window(tk.Tk):
         #                                                                                                                                                            float(self.thermal_cond_entry.get()),
         #                                                                                                                                                            float(self.density_entry.get()),
         #                                                                                                                                                            float(self.heat_capa_entry.get()),
-        #                                                                                                                                                            self))
-        self.simu_button.grid(row=10, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='s')
+        #                                                                                                                                                            float(self.thickness_entry.get()),
+        #           
+        self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:main.zero_verification(self.length_entry.get(),
+                                                                                                                                                                            self.thermal_cond_entry.get(),
+                                                                                                                                                                            self.density_entry.get(),
+                                                                                                                                                                            self.heat_capa_entry.get(),
+                                                                                                                                                                            self))
+        self.simu_button.grid(row=12, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='s')
 
         #Clear Button
         # self.clear_button = tk.Button(self.main_frame, text="Clear Plot", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: self.clear_canvas())
@@ -151,10 +171,6 @@ class Window(tk.Tk):
         self.canvas.draw()
         #figure_plot.legend((figure_one, figure_two), ('Reel', 'Imaginary'), 'upper right')
 
-
-        #self.canvas.draw()
-
-    
     def get_value_mode(self):
         value_mode = self.mode.get()
         return value_mode
@@ -168,6 +184,13 @@ class Window(tk.Tk):
         #     self.canvas.get_tk_widget().delete(item)
         # self.toolbar_plot.get_tk_widget().delete()
 
+    def modify_status(self, event):
+        if (event == 1):
+            self.var_status.set("Status : Simulation Completed")
+        if (event == 2):
+            self.var_status.set("Status : Some necessary parameters are empty")
+        if (event == 3):
+            self.var_status.set("Status : Some parameters are equal to zero")
 
 # def main():
 #     window = Window()

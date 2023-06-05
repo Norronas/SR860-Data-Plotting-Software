@@ -25,21 +25,33 @@ def complex_quadrature(func, a, b, **kwargs):
     #return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
 
 
-def point_calculation(R, I, l, b, k, rho, cp, window):
+def point_calculation(R, I, l, b, k, rho, cp, T, window):
+    print("1")
+    # if(zero_verification(l, k, rho, cp, window) == 0):
+    #     print("2")
+    #     return
     freq = MIN_FREQUECY
     frequency_list = []
     real_result_list = []
     imag_result_list = []
     decade_mult = 1
     prms = (R * I**2)/l
+    constante = (-prms/(cmath.pi*k))
     alpha = (k/(rho * cp)) 
-    q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
+    #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
             if (int(graphics.Window.get_value_mode(window)) == 0):
-                constante = (-prms/(cmath.pi*k))
                 A1 = -1
                 fonction = lambda nu : ((1/(A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
+                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
+            if (int(graphics.Window.get_value_mode(window)) == 1):
+                # A1 = (-cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T))
+                fonction = lambda nu : ((1/((-cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T))*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
+                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
+            if (int(graphics.Window.get_value_mode(window)) == 2):
+                # A1 = (-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))
+                fonction = lambda nu : ((1/((-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
             #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
             #fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
@@ -50,8 +62,28 @@ def point_calculation(R, I, l, b, k, rho, cp, window):
             freq = (i+1) * decade_mult
         decade_mult *= 10
         print(real_result_list)
+    graphics.Window.modify_status(window, 1)
     graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
+def zero_verification(l, k, rho, cp, window):
+    point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, window)
+    if(l == "" or k == "" or rho == "" or cp == ""):
+        graphics.Window.modify_status(window, 2)
+        return 0
+    elif(float(l) == 0 or float(k) == 0 or float(rho) == 0 or float(cp) == 0):
+        graphics.Window.modify_status(window, 3)
+        print("AIEIIIE")
+        return 0
+    else:
+        point_calculation(float(window.resistance_entry.get()),
+                        float(window.current_entry.get()),
+                        float(window.length_entry.get()),
+                        float(window.width_entry.get())/2,
+                        float(window.thermal_cond_entry.get()),
+                        float(window.density_entry.get()),
+                        float(window.heat_capa_entry.get()),
+                        float(window.thickness_entry.get()),
+                        graphics.Window)
 
 #Parameter to integrate
 
@@ -85,7 +117,6 @@ def point_calculation(R, I, l, b, k, rho, cp, window):
 
 def main():
     nu = smp.symbols('nu', real=True)
-    
     window = graphics.Window()
     window.mainloop()
 
