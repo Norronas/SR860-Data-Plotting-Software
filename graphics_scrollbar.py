@@ -39,114 +39,108 @@ class Window(tk.Tk):
         self.mode = tk.StringVar()
         self.mode.set(1)
         self.var_status = tk.StringVar()
+    
+        #Canvas into main frame
+        self.canvas_und = tk.Canvas(self, width=WIDTH_FRAME, height=HEIGHT_FRAME)
+        self.canvas_und.grid_rowconfigure(0, weight=1)
+        self.canvas_und.grid_rowconfigure(MAX_ROW, weight=1)
+        self.canvas_und.grid_columnconfigure(0, weight=1)
+        self.canvas_und.grid_columnconfigure(MAX_COLUMN-1, weight=1)
+        self.canvas_und.grid_propagate(0)
+        self.canvas_und.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
 
-        #Canvas & scrollbar
-        # self.canvas_und = tk.Canvas(self, width=WIDTH_FRAME, height=HEIGHT_FRAME,scrollregion=(0,0,1900,1900))
-        # self.scrollbar = tk.Scrollbar(self, command=self.canvas_und.yview)
-        # self.scrollbar.pack(side=tk.LEFT, fill='y')
-        # # self.canvas_und.grid(side=tk.LEFT, fill='both', expand=True)
-        # self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
-        # self.canvas_und.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
+        #Scrollbar
+        self.scrollbar = tk.Scrollbar(self, command=self.canvas_und.yview)
+        self.scrollbar.pack(side=tk.LEFT, fill='y')
+        # self.canvas_und.grid(side=tk.LEFT, fill='both', expand=True)
+        self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
 
         #Frames
-        self.main_frame = tk.Frame(self, height = HEIGHT_FRAME, width = WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
-        self.main_frame.grid_rowconfigure(0, weight=1)
-        self.main_frame.grid_rowconfigure(MAX_ROW, weight=1)
-        self.main_frame.grid_columnconfigure(0, weight=1)
-        self.main_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
-        self.main_frame.grid_propagate(0)
-        self.main_frame.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
+        # self.main_frame = tk.Frame(self.canvas_und, height = HEIGHT_FRAME, width = WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
+        # self.canvas_und.create_window((0,0), window=self.main_frame, anchor='nw')
+        # self.main_frame.grid_rowconfigure(0, weight=1)
+        # self.main_frame.grid_rowconfigure(MAX_ROW, weight=1)
+        # self.main_frame.grid_columnconfigure(0, weight=1)
+        # self.main_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
+        # self.main_frame.grid_propagate(0)
+        # self.main_frame.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
 
         self.second_frame = tk.Frame(self, height = HEIGHT - HEIGHT_FRAME, width = WIDTH - WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_BUTTON)
         # self.second_frame.pack_propagate(0)
         self.second_frame.pack(side=tk.RIGHT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='e')
-        
-        #Canvas & Scollbar
-        self.canvas_und = tk.Canvas(self.main_frame, width=WIDTH_FRAME+100, height=HEIGHT_FRAME,scrollregion=(0,0,HEIGHT_FRAME,HEIGHT_FRAME))
-        self.scrollbar = tk.Scrollbar(self.main_frame, orient=tk.VERTICAL, command=self.canvas_und.yview)
-        self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
-        self.scrollbar.grid(row=0,column=1,sticky='nsw')
-        self.canvas_und.grid(row=0,column=0,sticky='news')
-        self.canvas_frame = tk.Frame(self.canvas_und, width=WIDTH_FRAME, height=HEIGHT_FRAME)
-        self.canvas_frame.grid_rowconfigure(0, weight=1)
-        self.canvas_frame.grid_rowconfigure(MAX_ROW, weight=1)
-        self.canvas_frame.grid_columnconfigure(0, weight=1)
-        self.canvas_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
-        self.canvas_frame.grid_propagate(0)
-        self.canvas_und.create_window(0, 0, anchor='nw', height=WIDTH_FRAME, width=HEIGHT_FRAME, window=self.canvas_frame)
 
         #Resistance widgets
-        self.resistance_label = tk.Label(self.canvas_frame, text="Resistance (Ω)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.resistance_label = tk.Label(self.canvas_und, text="Resistance (Ω)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.resistance_label.grid(row=0, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
 
-        self.resistance_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.resistance_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.resistance_entry.grid(row=0, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
 
         #Current widgets
-        self.current_label = tk.Label(self.canvas_frame, text="Current (A)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.current_label = tk.Label(self.canvas_und, text="Current (A)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.current_label.grid(row=1, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.current_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.current_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.current_entry.grid(row=1, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Lenght widgets
-        self.length_label = tk.Label(self.canvas_frame, text="Length ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.length_label = tk.Label(self.canvas_und, text="Length ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.length_label.grid(row=2, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.length_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.length_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.length_entry.grid(row=2, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Width widgets
-        self.width_label = tk.Label(self.canvas_frame, text="Width ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.width_label = tk.Label(self.canvas_und, text="Width ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.width_label.grid(row=3, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.width_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.width_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.width_entry.grid(row=3, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Thermal Conductivity widgets
-        self.thermal_cond_label = tk.Label(self.canvas_frame, text="Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.thermal_cond_label = tk.Label(self.canvas_und, text="Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thermal_cond_label.grid(row=4, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.thermal_cond_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thermal_cond_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.thermal_cond_entry.grid(row=4, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Density widgets
-        self.density_label = tk.Label(self.canvas_frame, text="Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.density_label = tk.Label(self.canvas_und, text="Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.density_label.grid(row=5, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.density_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.density_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.density_entry.grid(row=5, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Heat Capacity widgets
-        self.heat_capa_label = tk.Label(self.canvas_frame, text="Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.heat_capa_label = tk.Label(self.canvas_und, text="Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.heat_capa_label.grid(row=6, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.heat_capa_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.heat_capa_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.heat_capa_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Thickness widgets
-        self.thickness_label = tk.Label(self.canvas_frame, text="Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.thickness_label = tk.Label(self.canvas_und, text="Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thickness_label.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.thickness_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thickness_entry = tk.Entry(self.canvas_und, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
         self.thickness_entry.grid(row=7, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='e')
 
         #Status Label
         self.var_status.set("Status : Enter parameters")
-        self.thickness_label = tk.Label(self.canvas_frame, textvariable=self.var_status, font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.thickness_label = tk.Label(self.canvas_und, textvariable=self.var_status, font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
         self.thickness_label.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
         #Select Simulation
         
-        self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", variable = self.mode, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
+        self.first_mode = tk.Radiobutton(self.canvas_und, text="Semi-Infinite Substrate", variable = self.mode, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
         self.first_mode.deselect()
         self.first_mode.grid(row=9, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
+        self.second_mode = tk.Radiobutton(self.canvas_und, text="Finite Substrate Adiabaticisothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
         self.second_mode.deselect()
         self.second_mode.grid(row=10, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
 
-        self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.get_value_mode())
+        self.third_mode = tk.Radiobutton(self.canvas_und, text="Finite Substrate Isothermal", variable = self.mode, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.get_value_mode())
         self.third_mode.deselect()
         self.third_mode.grid(row=11, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='w')
         
@@ -163,7 +157,7 @@ class Window(tk.Tk):
         #                                                                                                                                                            float(self.heat_capa_entry.get()),
         #                                                                                                                                                            float(self.thickness_entry.get()),
         #           
-        self.simu_button = tk.Button(self.canvas_frame, text="Start Simulation", width=160 ,font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.zero_verification(self.length_entry.get(),
+        self.simu_button = tk.Button(self.canvas_und, text="Start Simulation", width=160 ,font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.zero_verification(self.length_entry.get(),
                                                                                                                                                                             self.thermal_cond_entry.get(),
                                                                                                                                                                             self.density_entry.get(),
                                                                                                                                                                             self.heat_capa_entry.get(),
@@ -171,8 +165,21 @@ class Window(tk.Tk):
         self.simu_button.grid(row=12, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='sw')
 
         # Clear Button
-        self.clear_button = tk.Button(self.canvas_frame, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
         self.clear_button.grid(row=12, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=13, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=14, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=15, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=16, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=17, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
+        self.clear_button = tk.Button(self.canvas_und, text="Clear Plot", width=140, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
+        self.clear_button.grid(row=18, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='se')
     
     def init_canvas(self):
         self.figure_plot = Figure(figsize=(6,6), dpi = 100) 
