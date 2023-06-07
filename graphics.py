@@ -29,6 +29,7 @@ PADY_WIDGETS = 5
 PADX_WIDGETS = 5
 MAX_ROW = 30
 MAX_COLUMN = 2
+DISABLE_COLOR = "light gray"
 
 class Window(tk.Tk):
     def __init__(self):
@@ -38,6 +39,7 @@ class Window(tk.Tk):
         self.geometry("1200x700")
         self.widgets_init()
         self.init_canvas()
+        self.layer_lock()
 
     def widgets_init(self):
 
@@ -45,7 +47,7 @@ class Window(tk.Tk):
         self.mode_var = tk.StringVar()
         self.mode_var .set(1)
         self.layer_var = tk.StringVar()
-        self.layer_var.set(1)
+        self.layer_var.set(0)
         self.var_status = tk.StringVar()
 
         #Frames
@@ -63,6 +65,7 @@ class Window(tk.Tk):
         
         #Canvas & Scollbar
         self.canvas_und = tk.Canvas(self.main_frame, width=WIDTH_FRAME+100, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR))
+        self.canvas_und.bind_all("<MouseWheel>", self._on_mousewheel)
         self.scrollbar = tk.Scrollbar(self.main_frame, orient=tk.VERTICAL, command=self.canvas_und.yview)
         self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
         self.scrollbar.grid(row=0,column=1,sticky='nsw')
@@ -79,11 +82,11 @@ class Window(tk.Tk):
         self.layer_label = tk.Label(self.canvas_frame, text="Layers :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
         self.layer_label.grid(row=0, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
 
-        self.layer1_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 1", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_layer())
+        self.layer1_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 1", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer1_radiobutton.deselect()
         self.layer1_radiobutton.grid(row=1, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.layer2_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 2", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_layer())
+        self.layer2_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 2", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer2_radiobutton.deselect()
         self.layer2_radiobutton.grid(row=2, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
@@ -103,35 +106,35 @@ class Window(tk.Tk):
         self.resistance_label = tk.Label(self.canvas_frame, text="   Resistance (Ω)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.resistance_label.grid(row=5, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
-        self.resistance_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.resistance_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.resistance_entry.grid(row=5, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Current widgets
         self.current_label = tk.Label(self.canvas_frame, text="   Current (A)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.current_label.grid(row=6, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.current_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.current_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.current_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Lenght widgets
         self.length_label = tk.Label(self.canvas_frame, text="   Length ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.length_label.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.length_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.length_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.length_entry.grid(row=7, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Width widgets
         self.width_label = tk.Label(self.canvas_frame, text="   Width ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.width_label.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.width_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.width_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.width_entry.grid(row=8, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #TCR widgets
         self.tcr_label = tk.Label(self.canvas_frame, text="   TCR ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.tcr_label.grid(row=9, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.tcr_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.tcr_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.tcr_entry.grid(row=9, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         self.tcr_entry.insert(0, "0.003")
 
@@ -151,28 +154,28 @@ class Window(tk.Tk):
         self.thermal_cond1_label = tk.Label(self.canvas_frame, text="   Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thermal_cond1_label.grid(row=12, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.thermal_cond1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thermal_cond1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.thermal_cond1_entry.grid(row=12, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Density Layer 1 widgets
         self.density1_label = tk.Label(self.canvas_frame, text="   Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.density1_label.grid(row=13, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.density1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.density1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.density1_entry.grid(row=13, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Heat Capacity Layer 1 widgets
         self.heat_capa1_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.heat_capa1_label.grid(row=14, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.heat_capa1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.heat_capa1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.heat_capa1_entry.grid(row=14, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Thickness Layer 1 widgets
         self.thickness1_label = tk.Label(self.canvas_frame, text="   Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thickness1_label.grid(row=15, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.thickness1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thickness1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.thickness1_entry.grid(row=15, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Separator
@@ -191,28 +194,28 @@ class Window(tk.Tk):
         self.thermal_cond2_label = tk.Label(self.canvas_frame, text="   Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thermal_cond2_label.grid(row=18, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.thermal_cond2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thermal_cond2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.thermal_cond2_entry.grid(row=18, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Density Layer 2 widgets
         self.density2_label = tk.Label(self.canvas_frame, text="   Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.density2_label.grid(row=19, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.density2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.density2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.density2_entry.grid(row=19, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Heat Capacity Layer 2 widgets
         self.heat_capa2_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.heat_capa2_label.grid(row=20, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.heat_capa2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.heat_capa2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.heat_capa2_entry.grid(row=20, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Thickness Layer 2 widgets
         self.thickness2_label = tk.Label(self.canvas_frame, text="   Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.thickness2_label.grid(row=21, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.thickness2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY)
+        self.thickness2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.thickness2_entry.grid(row=21, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Separator
@@ -279,7 +282,6 @@ class Window(tk.Tk):
         # Clear Button
         self.clear_button = tk.Button(self.canvas_frame, text="Reset", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
         self.clear_button.grid(row=30, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
-    
 
     def init_canvas(self):
         self.figure_plot = Figure(figsize=(6,6), dpi = 100) 
@@ -321,13 +323,77 @@ class Window(tk.Tk):
 
     def get_value_layer(self):
         value_layer = self.layer_var.get()
-        print(value_layer)
         return value_layer
+
+
+    def layer_lock(self):
+        print(self.get_value_layer())
+
+        if(int(self.get_value_layer()) == 1): #LAYER 1 CHOSEN
+            self.resistance_entry.config(state= "normal")
+            self.current_entry.config(state= "normal")
+            self.length_entry.config(state= "normal")
+            self.width_entry.config(state= "normal")
+            self.tcr_entry.config(state= "normal")
+
+            self.thermal_cond1_entry.config(state= "normal")
+            self.density1_entry.config(state= "normal")
+            self.heat_capa1_entry.config(state= "normal")
+            self.thickness1_entry.config(state= "normal")
+
+            self.thermal_cond2_entry.delete(0, 'end')
+            self.density2_entry.delete(0, 'end')
+            self.heat_capa2_entry.delete(0, 'end')
+            self.thickness2_entry.delete(0, 'end')
+
+            self.thermal_cond2_entry.config(state= "disabled")
+            self.density2_entry.config(state= "disabled")
+            self.heat_capa2_entry.config(state= "disabled")
+            self.thickness2_entry.config(state= "disabled")
+
+
+        elif(int(self.get_value_layer()) == 2): #LAYER 2 CHOSEN
+            self.resistance_entry.config(state= "normal")
+            self.current_entry.config(state= "normal")
+            self.length_entry.config(state= "normal")
+            self.width_entry.config(state= "normal")
+            self.tcr_entry.config(state= "normal")
+
+            self.thermal_cond1_entry.config(state= "normal")
+            self.density1_entry.config(state= "normal")
+            self.heat_capa1_entry.config(state= "normal")
+            self.thickness1_entry.config(state= "normal")
+
+            self.thermal_cond2_entry.config(state= "normal")
+            self.density2_entry.config(state= "normal")
+            self.heat_capa2_entry.config(state= "normal")
+            self.thickness2_entry.config(state= "normal")
+
+        else:
+            #ALL DISABLE BY DEFAULT
+            self.resistance_entry.config(state= "disabled")
+            self.current_entry.config(state= "disabled")
+            self.length_entry.config(state= "disabled")
+            self.width_entry.config(state= "disabled")
+            self.tcr_entry.config(state= "disabled")
+
+            self.thermal_cond1_entry.config(state= "disabled")
+            self.density1_entry.config(state= "disabled")
+            self.heat_capa1_entry.config(state= "disabled")
+            self.thickness1_entry.config(state= "disabled")
+
+            self.thermal_cond2_entry.config(state= "disabled")
+            self.density2_entry.config(state= "disabled")
+            self.heat_capa2_entry.config(state= "disabled")
+            self.thickness2_entry.config(state= "disabled")
+
+
+    def _on_mousewheel(self, event):
+        self.canvas_und.yview_scroll(int(-1*(event.delta/120)), "units")
 
 
     def clear_canvas(self):
         return 0
-
         # self.figure_plot.clear()
         # self.figure_plot.add_subplot(111)         
         # self.canvas.draw_idle()

@@ -24,7 +24,7 @@ def complex_quadrature(func, a, b, **kwargs):
     #return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
 
 
-def point_calculation(R, I, l, b, k, rho, cp, T, window):
+def point_calculation_layer1(R, I, l, b, k, rho, cp, T, window):
     freq = MIN_FREQUECY
     frequency_list = []
     real_result_list = []
@@ -53,8 +53,6 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
             frequency_list.append(np.log(4*np.pi*freq))                                                 #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.real(result))))   #Transformation delta(T) to mV
             imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.imag(result))))   #Transformation delta(T) to mV
-            # real_result_list.append(np.real(result))
-            # imag_result_list.append(np.imag(result))
             freq = (i+1) * decade_mult
         decade_mult *= 10
     fmin = ((25*alpha) / (4*cmath.pi*(T**2)))
@@ -64,8 +62,56 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
     graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
 
+
+def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, window):
+    freq = MIN_FREQUECY
+    frequency_list = []
+    real_result_list = []
+    imag_result_list = []
+    decade_mult = 0.001 #1
+    constante = 1
+    prms = (R * I**2)/l
+    alpha1 = (k1/(rho1 * cp1))
+    alpha2 = (k2/(rho2 * cp2)) 
+    omega = (2*cmath.pi*freq)
+    # B1 = lambda nu : (cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))
+    # B2 = lambda nu : (cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))
+    # phi1 = B1 * T1
+    # phi2 = B2 * T2 
+    # var1 = ((k2*A2*B2/(k1*B1))-cmath.tanh(phi1))
+    # var2 = (k2*A2*B2*cmath.tanh(phi1)/(k1*B1))
+    # A1 = (var1/(1-var2))
+    # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*B1*A1))
+    while(freq <= MAX_FREQUENCY):
+        for i in range (1,DECADE):
+            if (int(graphics.Window.get_value_mode(window)) == 0):
+                A2 = -1
+                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
+                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+            if (int(graphics.Window.get_value_mode(window)) == 1):
+                # A2 = lambda nu : (-cmath.tanh(B2*T2))
+                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
+                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+            if (int(graphics.Window.get_value_mode(window)) == 2):
+                # A2 = lambda nu : (-1/(-cmath.tanh(B2*T2)))
+                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
+                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+
+            frequency_list.append(np.log(4*np.pi*freq))                                                 #Transformation Hz to ln(2w)
+            real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.real(result))))   #Transformation delta(T) to mV
+            imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.imag(result))))   #Transformation delta(T) to mV
+            freq = (i+1) * decade_mult
+        decade_mult *= 10
+    # fmin = ((25*alpha) / (4*cmath.pi*(T**2)))
+    # fmax = (alpha / (100*cmath.pi*(b**2)))
+    # graphics.Window.canvas_draw_freq(window, np.log(4*np.pi*fmin), np.log(4*np.pi*fmax))
+    graphics.Window.modify_status(window, 1)
+    graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
+
+
+
 def zero_verification(l, k, rho, cp, window):
-    point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, window)
+    point_calculation_layer1(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, window)
     if(l == "" or k == "" or rho == "" or cp == ""):
         graphics.Window.modify_status(window, 2)
         return 0
@@ -73,15 +119,31 @@ def zero_verification(l, k, rho, cp, window):
         graphics.Window.modify_status(window, 3)
         return 0
     else:
-        point_calculation(float(window.resistance_entry.get()),
-                        float(window.current_entry.get()),
-                        float(window.length_entry.get()),
-                        float(window.width_entry.get())/2,
-                        float(window.thermal_cond1_entry.get()),
-                        float(window.densit1_entry.get()),
-                        float(window.heat_capa1_entry.get()),
-                        float(window.thickness1_entry.get()),
-                        graphics.Window)
+        if (int(graphics.Window.get_value_layer(window)) == 1):
+            point_calculation_layer1(float(window.resistance_entry.get()),
+                            float(window.current_entry.get()),
+                            float(window.length_entry.get()),
+                            float(window.width_entry.get())/2,
+                            float(window.thermal_cond1_entry.get()),
+                            float(window.densit1_entry.get()),
+                            float(window.heat_capa1_entry.get()),
+                            float(window.thickness1_entry.get()),
+                            graphics.Window)
+            
+        elif (int(graphics.Window.get_value_layer(window)) == 2):
+            point_calculation_layer2(float(window.resistance_entry.get()),
+                            float(window.current_entry.get()),
+                            float(window.length_entry.get()),
+                            float(window.width_entry.get())/2,
+                            float(window.thermal_cond1_entry.get()),
+                            float(window.densit1_entry.get()),
+                            float(window.heat_capa1_entry.get()),
+                            float(window.thickness1_entry.get()),
+                            float(window.thermal_cond2_entry.get()),
+                            float(window.densit2_entry.get()),
+                            float(window.heat_capa2_entry.get()),
+                            float(window.thickness2_entry.get()),
+                            graphics.Window)
 
 #Parameter to integrate
 
