@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import quad  
 
-MAX_INTEGRATE = 10000000
-MIN_FREQUECY = 1
+MAX_INTEGRATE = 100000
+MIN_FREQUECY = 0.001
 MAX_FREQUENCY = 1000000
 MAX_LIST = 1000
 DECADE = 10
@@ -29,13 +29,14 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
     frequency_list = []
     real_result_list = []
     imag_result_list = []
-    decade_mult = 1
+    decade_mult = 0.001 #1
     prms = (R * I**2)/l
     constante = (-prms/(cmath.pi*k))
     alpha = (k/(rho * cp)) 
     #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
+
             if (int(graphics.Window.get_value_mode(window)) == 0):
                 A1 = -1
                 fonction = lambda nu : ((1/(A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
@@ -48,12 +49,17 @@ def point_calculation(R, I, l, b, k, rho, cp, T, window):
                 # A1 = (-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))
                 fonction = lambda nu : ((1/((-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
-            frequency_list.append(np.log(4*np.pi*freq))
-            real_result_list.append(np.real(result))
-            imag_result_list.append(np.imag(result))
+
+            frequency_list.append(np.log(4*np.pi*freq))                                                 #Transformation Hz to ln(2w)
+            real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.real(result))))   #Transformation delta(T) to mV
+            imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.imag(result))))   #Transformation delta(T) to mV
+            # real_result_list.append(np.real(result))
+            # imag_result_list.append(np.imag(result))
             freq = (i+1) * decade_mult
         decade_mult *= 10
-        print(real_result_list)
+    fmin = ((25*alpha) / (4*cmath.pi*(T**2)))
+    fmax = (alpha / (100*cmath.pi*(b**2)))
+    graphics.Window.canvas_draw_freq(window, np.log(4*np.pi*fmin), np.log(4*np.pi*fmax))
     graphics.Window.modify_status(window, 1)
     graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
@@ -71,10 +77,10 @@ def zero_verification(l, k, rho, cp, window):
                         float(window.current_entry.get()),
                         float(window.length_entry.get()),
                         float(window.width_entry.get())/2,
-                        float(window.thermal_cond_entry.get()),
-                        float(window.density_entry.get()),
-                        float(window.heat_capa_entry.get()),
-                        float(window.thickness_entry.get()),
+                        float(window.thermal_cond1_entry.get()),
+                        float(window.densit1_entry.get()),
+                        float(window.heat_capa1_entry.get()),
+                        float(window.thickness1_entry.get()),
                         graphics.Window)
 
 #Parameter to integrate
