@@ -34,8 +34,11 @@ DISABLE_COLOR = "light gray"
 class Window(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('  3-Omega Helping Application')
-        self.iconbitmap('icon.ico')
+        self.title('  3-Omega Helping Software')
+        try:
+            self.iconbitmap('icon.ico')
+        except:
+            print("Could not load the icon")
         self.geometry("1200x700")
         self.widgets_init()
         self.init_canvas()
@@ -64,7 +67,7 @@ class Window(tk.Tk):
         self.second_frame.pack(side=tk.RIGHT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='e')
         
         #Canvas & Scollbar
-        self.canvas_und = tk.Canvas(self.main_frame, width=WIDTH_FRAME+100, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR))
+        self.canvas_und = tk.Canvas(self.main_frame, width=WIDTH_FRAME+100, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR), background=BACKGROUND_MAIN_FRAME)
         self.canvas_und.bind_all("<MouseWheel>", self._on_mousewheel)
         self.scrollbar = tk.Scrollbar(self.main_frame, orient=tk.VERTICAL, command=self.canvas_und.yview)
         self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
@@ -316,6 +319,11 @@ class Window(tk.Tk):
         self.fmax_plot = self.figure_axis.axvline(x=fmax, color = 'gray', linestyle='--')
 
 
+    def canvas_draw_data_points(self, reel, imag, freq):
+        self_data_real_plot = self.figure_axis.plot(freq, reel, marker="o", color ='Red')
+        self_data_imag_plot = self.figure_axis.plot(freq, imag, marker="o", color ='Purple')
+
+
     def get_value_mode(self):
         value_mode = self.mode_var.get()
         return value_mode
@@ -327,8 +335,6 @@ class Window(tk.Tk):
 
 
     def layer_lock(self):
-        print(self.get_value_layer())
-
         if(int(self.get_value_layer()) == 1): #LAYER 1 CHOSEN
             self.resistance_entry.config(state= "normal")
             self.current_entry.config(state= "normal")

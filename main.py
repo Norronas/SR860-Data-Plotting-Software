@@ -5,6 +5,7 @@ import sympy as smp
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import quad  
+import pyvisa
 
 MAX_INTEGRATE = 100000
 MIN_FREQUECY = 0.001
@@ -36,9 +37,9 @@ def point_calculation_layer1(R, I, l, b, k, rho, cp, T, window):
     #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
-
+            
             if (int(graphics.Window.get_value_mode(window)) == 0):
-                A1 = -1
+                A1 = (-1)
                 fonction = lambda nu : ((1/(A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
             if (int(graphics.Window.get_value_mode(window)) == 1):
@@ -69,8 +70,6 @@ def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, w
     real_result_list = []
     imag_result_list = []
     decade_mult = 0.001 #1
-    constante = 1
-    prms = (R * I**2)/l
     alpha1 = (k1/(rho1 * cp1))
     alpha2 = (k2/(rho2 * cp2)) 
     omega = (2*cmath.pi*freq)
@@ -145,45 +144,29 @@ def zero_verification(l, k, rho, cp, window):
                             float(window.thickness2_entry.get()),
                             graphics.Window)
 
-#Parameter to integrate
 
-#Parameters
-# R = 11.212 #Resistance
-# I = 0.028907 #Courant 
-# l = 0.0025 #Longueur de la ligne
-# b = 0.000034/2
-# k = 0.297
-# rho = 1350
-# cp=1300
+def init_data_collect_lockin():
+    try:
+        return 0
+        lockin = pyvisa.RessourceManager().open_ressource() #Mettre le truc là
+    except:
+        return 0
 
-#Frequency to change
-
-#Equations
-# prms = (R * I**2)/l
-# alpha = (k/(rho * cp)) 
-# q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha) 
-# fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
-
-#fonction = lambda nu: (prms/(np.pi*k))*((cmath.sin(nu*b)**2)/(((nu*b)**2)*(cmath.sqrt(nu**2 + q**2))))
+def collect_data_lockin(window):
+    return 0
+    reel = sr860.ask("*OUTR? [0]\n")
+    imag = sr860.ask("*OUTR? [1]\n")
+    freq = sr860.ask("*OUTR? [2]\n")
+    graphics.Window.canvas_draw_data_points(window, reel, imag, freq)
 
 
-#AUTRE METHODE
-# constante = (-prms/(cmath.pi*k))
-# A1 = -1
-# B1 = lambda nu : (cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) 
-# fonction2 = lambda nu : ((1/(A1*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2)) #REMPLACER B1 PAR SA FONCTION 
-# result = constante * complex_quadrature(fonction2, 0, MAX_INTEGRATE)
-# print(result)
+
 
 def main():
     nu = smp.symbols('nu', real=True)
     window = graphics.Window()
+    init_data_collect_lockin()
     window.mainloop()
 
 if __name__ == '__main__':
     main()
-
-#point_calculation(R,I,l,b,k,rho,cp, fonction)
-
-#plot_result(frequency_list,real_result_list, imag_result_list)
-
