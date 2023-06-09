@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 #Constantes
 HEIGHT = 700
 HEIGHT_FRAME = 700
-HEIGHT_SCROLLBAR = 1150
+HEIGHT_SCROLLBAR = 1225
 WIDTH = 1200
 WIDTH_FRAME = 300
 WIDTH_ENTRY = 12
@@ -51,6 +51,10 @@ class Window(tk.Tk):
         self.mode_var .set(1)
         self.layer_var = tk.StringVar()
         self.layer_var.set(0)
+        self.var_fmin_result = tk.StringVar()
+        self.var_fmin_result.set("   Result Fmin :")
+        self.var_fmax_result = tk.StringVar()
+        self.var_fmax_result.set("   Result Fmax :")
         self.var_status = tk.StringVar()
 
         #Frames
@@ -225,44 +229,59 @@ class Window(tk.Tk):
         self.separator4_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.separator4_label.grid(row=22, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
-        #######################
-        ### STATUS  WIDGETS ###
-        #######################
-        
-        #Status Label
-        self.var_status.set("Status : Enter parameters")
-        self.status_label = tk.Label(self.canvas_frame, textvariable=self.var_status, font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.status_label.grid(row=23, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
-
-        #Separator
-        self.separator5_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator5_label.grid(row=24, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
-
         ################################
         ### SIMULATION MODE SELECTOR ###
         ################################
 
         #Simulation Mode Choice Label widget
         self.sim_mode_choice_label = tk.Label(self.canvas_frame, text="Simulation Mode Choice", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.sim_mode_choice_label.grid(row=25, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.sim_mode_choice_label.grid(row=23, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')    
 
-        #Select Simulation
+        #Select Simulation widgets
         
         self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
         self.first_mode.deselect()
-        self.first_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.first_mode.grid(row=24, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
         self.second_mode.deselect()
-        self.second_mode.grid(row=27, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.second_mode.grid(row=25, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.get_value_mode())
         self.third_mode.deselect()
-        self.third_mode.grid(row=28, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.third_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+
+        #Separator
+        self.separator5_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.separator5_label.grid(row=27, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+
+        ################################
+        ###       RESULT LABEL       ###
+        ################################
+
+        #Results Title Label widget
+        self.result_label = tk.Label(self.canvas_frame, text="Results :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.result_label.grid(row=28, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
+
+        #Fmin result Label widget
+        self.fmin_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmin_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.fmin_result_label.grid(row=29, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        
+        #Fmax result Label widget
+        self.fmax_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmax_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.fmax_result_label.grid(row=30, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         #Separator
         self.separator6_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator6_label.grid(row=29, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator6_label.grid(row=31, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+
+        ################################
+        ###         BUTTONS          ###
+        ################################
+
+        #Lockin Button
+        self.lockin_button = tk.Button(self.canvas_frame, text="Lockin Collect Data", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.collect_data_lockin(self))
+        self.lockin_button.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Simulation Button
         #self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, self))
@@ -280,11 +299,11 @@ class Window(tk.Tk):
                                                                                                                                                                             self.density1_entry.get(),
                                                                                                                                                                             self.heat_capa1_entry.get(),
                                                                                                                                                                             self))
-        self.simu_button.grid(row=30, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.simu_button.grid(row=33, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         # Clear Button
         self.clear_button = tk.Button(self.canvas_frame, text="Reset", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
-        self.clear_button.grid(row=30, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.clear_button.grid(row=33, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
     def init_canvas(self):
         self.figure_plot = Figure(figsize=(6,6), dpi = 100) 
@@ -312,6 +331,11 @@ class Window(tk.Tk):
         self.canvas.draw()
         self.canvas.blit()
         self.figure_axis.legend(handles = [reel_legend, imag_legend])
+
+
+    def freq_change_label_value(self, fmin, fmax):
+        self.var_fmin_result.set("   Result Fmin : " + str(round(fmin, 2)) + " Hz")
+        self.var_fmax_result.set("   Result Fmax : " + str(round(fmax, 2)) + " Hz")
 
 
     def canvas_draw_freq(self, fmin, fmax):
@@ -410,10 +434,19 @@ class Window(tk.Tk):
         #self.toolbar_plot.get_tk_widget().delete()
 
 
-    def modify_status(self, event):
-        if (event == 1):
-            self.var_status.set("Status : Simulation Completed")
-        if (event == 2):
+    def create_error_window(self, error_level):
+        errow_window = tk.Toplevel(self, background=BACKGROUND_MAIN_FRAME)
+        try:
+            self.iconbitmap('icon.ico')
+        except:
+            print("Could not load the icon")
+        self.geometry("1200x700")
+        errow_window.title("   Error")
+        error_label = tk.Label(errow_window, textvariable=self.var_status, font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        error_label.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True)
+        if (error_level == 1):
+            self.var_status.set("Status : Cannot connect to the lockin amplifier")
+        if (error_level == 2):
             self.var_status.set("Status : Necessary parameters empty")
-        if (event == 3):
+        if (error_level == 3):
             self.var_status.set("Status : Parameters equal to zero")
