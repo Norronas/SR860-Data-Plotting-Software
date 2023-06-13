@@ -300,7 +300,7 @@ class Window(tk.Tk):
             self.img = ImageTk.PhotoImage(Image.open("IEMN_logo.png"))
             self.panel = tk.Label(self.canvas_frame, image=self.img, background=BACKGROUND_MAIN_FRAME)
             self.panel.photo = self.img
-            self.panel.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+            self.panel.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         except:
             print("Couldn't load the IEMN picture")
 

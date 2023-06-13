@@ -12,6 +12,7 @@ MIN_FREQUECY = 0.001
 MAX_FREQUENCY = 1000000
 MAX_LIST = 1000
 DECADE = 10
+AMPLIFIER_ID = 'USB0::0xB506::0x2000::004554::INSTR'
 
 '''Comes from https://stackoverflow.com/questions/5965583/use-scipy-integrate-quad-to-integrate-complex-numbers but modified by me'''
 def complex_quadrature(func, a, b, **kwargs):
@@ -68,7 +69,7 @@ def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, w
     frequency_list = []
     real_result_list = []
     imag_result_list = []
-    decade_mult = 0.001 #1
+    decade_mult = 0.001 
     alpha1 = (k1/(rho1 * cp1))
     alpha2 = (k2/(rho2 * cp2)) 
     omega = (2*cmath.pi*freq)
@@ -153,16 +154,17 @@ def zero_verification(l, k, rho, cp, window):
 
 def init_data_collect_lockin(window):
     try:
-        lockin = pyvisa.RessourceManager().open_ressource() #Mettre le truc là
+        global lockin
+        lockin = pyvisa.ResourceManager().open_resource(AMPLIFIER_ID)
+        return 1
     except:
         graphics.Window.create_error_window(window, 1)
         return 0
 
 def collect_data_lockin(window):
-    return 0
-    reel = sr860.ask("*OUTR? [0]\n")
-    imag = sr860.ask("*OUTR? [1]\n")
-    freq = sr860.ask("*OUTR? [2]\n")
+    reel = 1000 * (lockin.query("OUTR? DAT1"))                  #IN mV
+    imag = 1000 * (lockin.query("OUTR? DAT2"))                  #IN mV
+    freq = np.log(4 * cmath.pi * lockin.query("OUTP? 16"))      #IN ln(2w)
     graphics.Window.canvas_draw_data_points(window, reel, imag, freq)
 
 
