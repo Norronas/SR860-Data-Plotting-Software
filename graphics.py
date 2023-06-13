@@ -1,29 +1,27 @@
 import main
 import tkinter as tk
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.figure import Figure
+from PIL import Image, ImageTk
 
 #Constantes
 HEIGHT = 700
 HEIGHT_FRAME = 700
-HEIGHT_SCROLLBAR = 1225
-WIDTH = 1200
-WIDTH_FRAME = 300
+HEIGHT_SCROLLBAR = 1500
+WIDTH = 700
+WIDTH_FRAME = 700
 WIDTH_ENTRY = 12
-WIDTH_BUTTON = 160
+WIDTH_BUTTON = 40
 WIDTH_RADIOBUTTON_LAYER = 20
-WIDTH_RADIOBUTTON_MODE = 160
-BACKGROUND_MAIN_FRAME = "#6dd5db" #Coueur hexa 6dd5db
+WIDTH_RADIOBUTTON_MODE = 40
+BACKGROUND_MAIN_FRAME = "#6dd5db"
 BACKGROUND_BUTTON = "#abe8eb"
 BACKGROUND_ENTRY = "#ffffff"
 RELIEF = tk.GROOVE
 FONT = "Helvetica"
 SEPARATOR = "-----------------------------------------------------------------"
-FONT_SIZE = 13
+COPYRIGHT = "© 2023 Cazin Némo. TOUS DROITS RÉSERVÉS"
+FONT_SIZE = 16
 BORDERWIDTH = 7
 PADY_WIDGETS = 5 
 PADX_WIDGETS = 5
@@ -39,7 +37,7 @@ class Window(tk.Tk):
             self.iconbitmap('icon.ico')
         except:
             print("Could not load the icon")
-        self.geometry("1200x700")
+        self.geometry("700x700")
         self.widgets_init()
         self.init_canvas()
         self.layer_lock()
@@ -48,7 +46,7 @@ class Window(tk.Tk):
 
         #Constants
         self.mode_var = tk.StringVar()
-        self.mode_var .set(1)
+        self.mode_var .set(3)
         self.layer_var = tk.StringVar()
         self.layer_var.set(0)
         self.var_fmin_result = tk.StringVar()
@@ -56,34 +54,21 @@ class Window(tk.Tk):
         self.var_fmax_result = tk.StringVar()
         self.var_fmax_result.set("   Result Fmax :")
         self.var_status = tk.StringVar()
-
-        #Frames
-        self.main_frame = tk.Frame(self, height = HEIGHT_FRAME, width = WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
-        self.main_frame.grid_rowconfigure(0, weight=1)
-        self.main_frame.grid_rowconfigure(MAX_ROW, weight=1)
-        self.main_frame.grid_columnconfigure(0, weight=1)
-        self.main_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
-        self.main_frame.grid_propagate(0)
-        self.main_frame.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='w')
-
-        self.second_frame = tk.Frame(self, height = HEIGHT - HEIGHT_FRAME, width = WIDTH - WIDTH_FRAME, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_BUTTON)
-        # self.second_frame.pack_propagate(0)
-        self.second_frame.pack(side=tk.RIGHT, padx=0, pady=0, fill = tk.BOTH, expand=True, anchor='e')
         
         #Canvas & Scollbar
-        self.canvas_und = tk.Canvas(self.main_frame, width=WIDTH_FRAME+100, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR), background=BACKGROUND_MAIN_FRAME)
+        self.canvas_und = tk.Canvas(self, width=WIDTH_FRAME, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR), background=BACKGROUND_MAIN_FRAME)
         self.canvas_und.bind_all("<MouseWheel>", self._on_mousewheel)
-        self.scrollbar = tk.Scrollbar(self.main_frame, orient=tk.VERTICAL, command=self.canvas_und.yview)
+        self.scrollbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=self.canvas_und.yview)
         self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
         self.scrollbar.grid(row=0,column=1,sticky='nsw')
-        self.canvas_und.grid(row=0,column=0,sticky='news')
+        self.canvas_und.grid(row=0,column=0,sticky='nws')
         self.canvas_frame = tk.Frame(self.canvas_und, width=WIDTH_FRAME, height=3000, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
         self.canvas_frame.grid_rowconfigure(0, weight=1)
         self.canvas_frame.grid_rowconfigure(MAX_ROW, weight=1)
         self.canvas_frame.grid_columnconfigure(0, weight=1)
         self.canvas_frame.grid_columnconfigure(MAX_COLUMN-1, weight=1)
-        self.canvas_frame.grid_propagate(0)
-        self.canvas_und.create_window(0, 0, anchor='nw', height=HEIGHT_SCROLLBAR, width=WIDTH_FRAME+110, window=self.canvas_frame)
+        # self.canvas_frame.grid_propagate(0)
+        self.canvas_und.create_window(0, 0, anchor='nw', height=HEIGHT_SCROLLBAR, width=WIDTH_FRAME, window=self.canvas_frame)
 
         #Layers widgets
         self.layer_label = tk.Label(self.canvas_frame, text="Layers :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
@@ -239,15 +224,15 @@ class Window(tk.Tk):
 
         #Select Simulation widgets
         
-        self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
+        self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.first_mode.deselect()
         self.first_mode.grid(row=24, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.get_value_mode())
+        self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.second_mode.deselect()
         self.second_mode.grid(row=25, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.get_value_mode())
+        self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.delock_sim_button())
         self.third_mode.deselect()
         self.third_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
@@ -279,10 +264,6 @@ class Window(tk.Tk):
         ###         BUTTONS          ###
         ################################
 
-        #Lockin Button
-        self.lockin_button = tk.Button(self.canvas_frame, text="Lockin Collect Data", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.collect_data_lockin(self))
-        self.lockin_button.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
-
         #Simulation Button
         #self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, self))
         # self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:main.point_calculation(float(self.resistance_entry.get()),
@@ -299,38 +280,44 @@ class Window(tk.Tk):
                                                                                                                                                                             self.density1_entry.get(),
                                                                                                                                                                             self.heat_capa1_entry.get(),
                                                                                                                                                                             self))
-        self.simu_button.grid(row=33, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.simu_button.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        # Clear Button
-        self.clear_button = tk.Button(self.canvas_frame, text="Reset", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda: self.clear_canvas())
-        self.clear_button.grid(row=33, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        #Lockin Button
+        self.lockin_button = tk.Button(self.canvas_frame, text="Lockin Collect Data", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.collect_data_lockin(self))
+        self.lockin_button.grid(row=32, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+
+        self.separator7_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.separator7_label.grid(row=33, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+
+        ################################
+        ###        COPYRIGHT         ###
+        ################################
+
+        self.copyright_label = tk.Label(self.canvas_frame, text=COPYRIGHT, font=(FONT, FONT_SIZE-4, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.copyright_label.grid(row=34, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+
+        try:
+            self.img = ImageTk.PhotoImage(Image.open("IEMN_logo.png"))
+            self.panel = tk.Label(self.canvas_frame, image=self.img, background=BACKGROUND_MAIN_FRAME)
+            self.panel.photo = self.img
+            self.panel.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        except:
+            print("Couldn't load the IEMN picture")
 
     def init_canvas(self):
-        self.figure_plot = Figure(figsize=(6,6), dpi = 100) 
-        self.figure_axis = self.figure_plot.add_subplot(111)
-        self.figure_axis.set_xlabel("ln(2w)")
-        self.figure_axis.set_ylabel("Voltage 3w (mV)")
-        self.figure_axis.set_autoscalex_on(True)
-        self.figure_axis.grid()
-
-        self.canvas = FigureCanvasTkAgg(self.figure_plot, self.second_frame)
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-        toolbar_plot = NavigationToolbar2Tk(self.canvas, self.second_frame)
-        toolbar_plot.update()
-        self.canvas._tkcanvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        plt.figure(figsize=(6,6)) 
+        plt.subplot(111)
+        plt.xlabel("ln(2w)")
+        plt.ylabel("Voltage 3w (mV)")
 
 
     def canvas_draw(self, freq, reel, imag):
-        self.figure_one = self.figure_axis.plot(freq, reel, color ='Blue')
-        self.figure_two = self.figure_axis.plot(freq, imag, color ='Green')   
+        self.figure_one = plt.plot(freq, reel, color ='Blue', label ='Reel')
+        self.figure_two = plt.plot(freq, imag, color ='Green', label ='Imag')
         reel_legend = mpatches.Patch(color='Blue', label='Reel')
-        imag_legend = mpatches.Patch(color='Green', label='Imaginary')
-        self.figure_axis.grid()
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.canvas.draw()
-        self.canvas.blit()
-        self.figure_axis.legend(handles = [reel_legend, imag_legend])
+        imag_legend = mpatches.Patch(color='Green', label='Imaginary')   
+        plt.legend(handles = [reel_legend, imag_legend])
+        plt.show()
 
 
     def freq_change_label_value(self, fmin, fmax):
@@ -339,13 +326,13 @@ class Window(tk.Tk):
 
 
     def canvas_draw_freq(self, fmin, fmax):
-        self.fmin_plot = self.figure_axis.axvline(x=fmin, color = 'gray', linestyle='--')
-        self.fmax_plot = self.figure_axis.axvline(x=fmax, color = 'gray', linestyle='--')
+        self.fmin_plot = plt.axvline(x=fmin, color = 'gray', linestyle='--')
+        self.fmax_plot = plt.axvline(x=fmax, color = 'gray', linestyle='--')
 
 
     def canvas_draw_data_points(self, reel, imag, freq):
-        self_data_real_plot = self.figure_axis.plot(freq, reel, marker="o", color ='Red')
-        self_data_imag_plot = self.figure_axis.plot(freq, imag, marker="o", color ='Purple')
+        self_data_real_plot = plt.plot(freq, reel, marker="o", color ='Red')
+        self_data_imag_plot = plt.plot(freq, imag, marker="o", color ='Purple')
 
 
     def get_value_mode(self):
@@ -356,10 +343,11 @@ class Window(tk.Tk):
     def get_value_layer(self):
         value_layer = self.layer_var.get()
         return value_layer
-
+    
 
     def layer_lock(self):
-        if(int(self.get_value_layer()) == 1): #LAYER 1 CHOSEN
+        #LAYER 1 CHOSEN
+        if(int(self.get_value_layer()) == 1):                
             self.resistance_entry.config(state= "normal")
             self.current_entry.config(state= "normal")
             self.length_entry.config(state= "normal")
@@ -381,8 +369,10 @@ class Window(tk.Tk):
             self.heat_capa2_entry.config(state= "disabled")
             self.thickness2_entry.config(state= "disabled")
 
+            self.delock_sim_button()
 
-        elif(int(self.get_value_layer()) == 2): #LAYER 2 CHOSEN
+        #LAYER 2 CHOSEN
+        elif(int(self.get_value_layer()) == 2):                 
             self.resistance_entry.config(state= "normal")
             self.current_entry.config(state= "normal")
             self.length_entry.config(state= "normal")
@@ -399,8 +389,10 @@ class Window(tk.Tk):
             self.heat_capa2_entry.config(state= "normal")
             self.thickness2_entry.config(state= "normal")
 
+            self.delock_sim_button()
+
+        #ALL DISABLE BY DEFAULT
         else:
-            #ALL DISABLE BY DEFAULT
             self.resistance_entry.config(state= "disabled")
             self.current_entry.config(state= "disabled")
             self.length_entry.config(state= "disabled")
@@ -417,21 +409,14 @@ class Window(tk.Tk):
             self.heat_capa2_entry.config(state= "disabled")
             self.thickness2_entry.config(state= "disabled")
 
+            self.simu_button.config(state= "disabled")
+
+    def delock_sim_button(self):
+        if((int(self.get_value_layer()) != 0) and (int(self.get_value_mode()) != 3)):
+            self.simu_button.config(state= "normal")
 
     def _on_mousewheel(self, event):
         self.canvas_und.yview_scroll(int(-1*(event.delta/120)), "units")
-
-
-    def clear_canvas(self):
-        return 0
-        # self.figure_plot.clear()
-        # self.figure_plot.add_subplot(111)         
-        # self.canvas.draw_idle()
-        # self.figure_axis.grid()
-
-        # for item in self.canvas.get_tk_widget().find_all():
-        #     self.canvas.get_tk_widget().delete(item)
-        #self.toolbar_plot.get_tk_widget().delete()
 
 
     def create_error_window(self, error_level):
@@ -446,6 +431,7 @@ class Window(tk.Tk):
         error_label.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True)
         if (error_level == 1):
             self.var_status.set("Status : Cannot connect to the lockin amplifier")
+            self.lockin_button.config(state= "disabled")
         if (error_level == 2):
             self.var_status.set("Status : Necessary parameters empty")
         if (error_level == 3):

@@ -22,7 +22,6 @@ def complex_quadrature(func, a, b, **kwargs):
     real_integral = quad(real_func, a, b, **kwargs)
     imag_integral = quad(imag_func, a, b, **kwargs)
     return(complex(real_integral[0] , imag_integral[0]))
-    #return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
 
 
 def point_calculation_layer1(R, I, l, b, k, rho, cp, T, window):
@@ -73,6 +72,9 @@ def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, w
     alpha1 = (k1/(rho1 * cp1))
     alpha2 = (k2/(rho2 * cp2)) 
     omega = (2*cmath.pi*freq)
+    prms = (R * I**2)/l
+    constante = (-prms/(cmath.pi*k1))             
+
     # B1 = lambda nu : (cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))
     # B2 = lambda nu : (cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))
     # phi1 = B1 * T1
@@ -87,26 +89,27 @@ def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, w
                 A2 = -1
                 fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
                 # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
             if (int(graphics.Window.get_value_mode(window)) == 1):
                 # A2 = lambda nu : (-cmath.tanh(B2*T2))
                 fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
                 # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
             if (int(graphics.Window.get_value_mode(window)) == 2):
                 # A2 = lambda nu : (-1/(-cmath.tanh(B2*T2)))
                 fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
                 # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = complex_quadrature(fonction, 0, MAX_INTEGRATE)
+                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
 
             frequency_list.append(np.log(4*np.pi*freq))                                                 #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.real(result))))   #Transformation delta(T) to mV
             imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(np.imag(result))))   #Transformation delta(T) to mV
             freq = (i+1) * decade_mult
         decade_mult *= 10
-    # fmin = ((25*alpha) / (4*cmath.pi*(T**2)))
-    # fmax = (alpha / (100*cmath.pi*(b**2)))
-    # graphics.Window.canvas_draw_freq(window, np.log(4*np.pi*fmin), np.log(4*np.pi*fmax))
+    fmin = ((25*alpha1) / (4*cmath.pi*(T1**2)))
+    fmax = (alpha1 / (100*cmath.pi*(b**2)))
+    graphics.Window.freq_change_label_value(window, fmin, fmax)
+    graphics.Window.canvas_draw_freq(window, np.log(4*np.pi*fmin), np.log(4*np.pi*fmax))
     graphics.Window.canvas_draw(window, frequency_list, real_result_list, imag_result_list)
 
 
