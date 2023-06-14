@@ -1,10 +1,11 @@
+""" IMPORTS """
 import main
 import tkinter as tk
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from PIL import Image, ImageTk
 
-#Constantes
+""" CONSTANTS """
 HEIGHT = 700
 HEIGHT_FRAME = 700
 HEIGHT_SCROLLBAR = 1500
@@ -30,7 +31,14 @@ MAX_COLUMN = 2
 DISABLE_COLOR = "light gray"
 
 class Window(tk.Tk):
+    """ This is the complete class of software window and error windows. 
+    All functions referring to these windows and to the graph are present in this class.
+        They can also be called in the 'main.py' file.
+    """
     def __init__(self):
+        """ Initializes blank window and calls up widget creation 
+            and graph initialization functions
+        """
         super().__init__()
         self.title('  3-Omega Helping Software')
         try:
@@ -43,7 +51,8 @@ class Window(tk.Tk):
         self.layer_lock()
 
     def widgets_init(self):
-
+        """ Initialize all window widgets 
+        """
         #Constants
         self.mode_var = tk.StringVar()
         self.mode_var .set(3)
@@ -304,14 +313,22 @@ class Window(tk.Tk):
         except:
             print("Couldn't load the IEMN picture")
 
+
+
     def init_canvas(self):
+        """ Initializes the graph without showing it to the user
+        """
         plt.figure(figsize=(6,6)) 
         plt.subplot(111)
         plt.xlabel("ln(2w)")
         plt.ylabel("Voltage 3w (mV)")
 
 
+
     def canvas_draw(self, freq, reel, imag):
+        """ Draw the curves of the results obtained when calculating the integral.
+            Also place the graph legend and show the graph
+        """
         self.figure_one = plt.plot(freq, reel, color ='Blue', label ='Reel')
         self.figure_two = plt.plot(freq, imag, color ='Green', label ='Imag')
         reel_legend = mpatches.Patch(color='Blue', label='Reel')
@@ -320,32 +337,54 @@ class Window(tk.Tk):
         plt.show()
 
 
+
     def freq_change_label_value(self, fmin, fmax):
+        """ Change the text of the labels in the results section and indicate 
+            the value of the frequencies Fmin and Fmax
+        """
         self.var_fmin_result.set("   Result Fmin : " + str(round(fmin, 2)) + " Hz")
         self.var_fmax_result.set("   Result Fmax : " + str(round(fmax, 2)) + " Hz")
 
 
+
     def canvas_draw_freq(self, fmin, fmax):
+        """ Plots vertical lines on the graph indicating Fmin and Fmax frequencies
+        """
         self.fmin_plot = plt.axvline(x=fmin, color = 'gray', linestyle='--')
         self.fmax_plot = plt.axvline(x=fmax, color = 'gray', linestyle='--')
 
 
+
     def canvas_draw_data_points(self, reel, imag, freq):
+        """ Plots points on the graph using values retrieved from the amplifier 
+        """
         self_data_real_plot = plt.plot(freq, reel, marker="o", color ='Red')
         self_data_imag_plot = plt.plot(freq, imag, marker="o", color ='Purple')
 
 
+
     def get_value_mode(self):
+        """ Returns the value of the selected mode button.
+        """
         value_mode = self.mode_var.get()
         return value_mode
     
 
+
     def get_value_layer(self):
+        """ Returns the value of the selected layer button.
+        """
         value_layer = self.layer_var.get()
         return value_layer
     
 
+
     def layer_lock(self):
+        """ Allows parameter buttons to be unlocked or locked depending on 
+            which layer selection button has been selected.
+            All parameter buttons are locked by default when no layer selector
+            button has been selected
+        """
         #LAYER 1 CHOSEN
         if(int(self.get_value_layer()) == 1):                
             self.resistance_entry.config(state= "normal")
@@ -411,15 +450,31 @@ class Window(tk.Tk):
 
             self.simu_button.config(state= "disabled")
 
+
+
     def delock_sim_button(self):
+        """Allows you to unlock the simulation button if 
+            one of the layer selection buttons and one of the 
+            simulation mode selection buttons has been selected.
+        """
         if((int(self.get_value_layer()) != 0) and (int(self.get_value_mode()) != 3)):
             self.simu_button.config(state= "normal")
 
+
+
     def _on_mousewheel(self, event):
+        """ Comes from https://stackoverflow.com/questions/17355902/tkinter-binding-mousewheel-to-scrollbar
+            Use mouse wheel to scroll scrollbar
+        """
         self.canvas_und.yview_scroll(int(-1*(event.delta/120)), "units")
 
 
+
     def create_error_window(self, error_level):
+        """New error and warning management window. 
+            Allows you to better understand what needs to be done and whether 
+            the connection to the amplifier has been made correctly.
+        """
         errow_window = tk.Toplevel(self, background=BACKGROUND_MAIN_FRAME)
         try:
             self.iconbitmap('icon.ico')
@@ -436,3 +491,6 @@ class Window(tk.Tk):
             self.var_status.set("Status : Necessary parameters empty")
         if (error_level == 3):
             self.var_status.set("Status : Parameters equal to zero")
+        if (error_level == 4):
+            errow_window.title("   Warning")
+            self.var_status.set("⚠⚠⚠ To use amplifier data recovery, you must manually configure the amplifier beforehand. ⚠⚠⚠")
