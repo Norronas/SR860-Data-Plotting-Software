@@ -69,8 +69,8 @@ class Window(tk.Tk):
         self.canvas_und.bind_all("<MouseWheel>", self._on_mousewheel)
         self.scrollbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=self.canvas_und.yview)
         self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
-        self.scrollbar.grid(row=0,column=1,sticky='nsw')
-        self.canvas_und.grid(row=0,column=0,sticky='nws')
+        self.scrollbar.grid(row=0,column=1,sticky='nsew')
+        self.canvas_und.grid(row=0,column=0,sticky='nwes')
         self.canvas_frame = tk.Frame(self.canvas_und, width=WIDTH_FRAME, height=3000, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
         self.canvas_frame.grid_rowconfigure(0, weight=1)
         self.canvas_frame.grid_rowconfigure(MAX_ROW, weight=1)
@@ -352,6 +352,7 @@ class Window(tk.Tk):
         """
         self.fmin_plot = plt.axvline(x=fmin, color = 'gray', linestyle='--')
         self.fmax_plot = plt.axvline(x=fmax, color = 'gray', linestyle='--')
+        plt.show()
 
 
 
@@ -360,6 +361,7 @@ class Window(tk.Tk):
         """
         self_data_real_plot = plt.plot(freq, reel, marker="o", color ='Red')
         self_data_imag_plot = plt.plot(freq, imag, marker="o", color ='Purple')
+        plt.show()
 
 
 
@@ -486,7 +488,7 @@ class Window(tk.Tk):
         error_label.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True)
         if (error_level == 1):
             self.var_status.set("Status : Cannot connect to the lockin amplifier")
-            self.lockin_button.config(state= "disabled")
+            # self.lockin_button.config(state= "disabled")
         if (error_level == 2):
             self.var_status.set("Status : Necessary parameters empty")
         if (error_level == 3):

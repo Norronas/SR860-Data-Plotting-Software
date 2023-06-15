@@ -3,7 +3,6 @@ import graphics
 import math
 import cmath
 import sympy as smp
-# import numpy as np
 from scipy.integrate import quad  
 import pyvisa
 
@@ -15,7 +14,12 @@ MAX_LIST = 1000
 DECADE = 10
 AMPLIFIER_ID = 'USB0::0xB506::0x2000::004554::INSTR'
 
-
+""" CLASS """
+class Lockin:
+    """ Used for the initialization of the amplifier
+    """
+    status = 0
+    id = 0
 
 def complex_quadrature(func, a, b, **kwargs):
     """Comes from https://stackoverflow.com/questions/5965583/use-scipy-integrate-quad-to-integrate-complex-numbers 
@@ -28,10 +32,6 @@ def complex_quadrature(func, a, b, **kwargs):
     def imag_func(x):
         imag_tmp = func(x)
         return imag_tmp.imag
-    # def real_func(x):
-    #     return np.real(func(x))
-    # def imag_func(x):
-    #     return np.imag(func(x))
     real_integral = quad(real_func, a, b, **kwargs)
     imag_integral = quad(imag_func, a, b, **kwargs)
     return(complex(real_integral[0] , imag_integral[0]))
@@ -52,7 +52,6 @@ def point_calculation_layer1(R, I, l, b, k, rho, cp, T, window):
     prms = (R * I**2)/l
     constante = (-prms/(cmath.pi*k))
     alpha = (k/(rho * cp)) 
-    #q = cmath.sqrt(( complex(0,1) * 4 * cmath.pi * freq)/alpha)
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
             
@@ -69,7 +68,7 @@ def point_calculation_layer1(R, I, l, b, k, rho, cp, T, window):
                 fonction = lambda nu : ((1/((-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))*(cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
 
-            frequency_list.append(math.log(4*math.pi*freq))                                                 #Transformation Hz to ln(2w)
+            frequency_list.append(math.log(4*math.pi*freq))                                         #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.real)))   #Transformation delta(T) to mV
             imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.imag)))   #Transformation delta(T) to mV
             freq = (i+1) * decade_mult
@@ -125,7 +124,7 @@ def point_calculation_layer2(R, I, l, b, k1, rho1, cp1, T1, k2, rho2, cp2, T2, w
                 # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
                 result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
 
-            frequency_list.append(math.log(4*math.pi*freq))                                                 #Transformation Hz to ln(2w)
+            frequency_list.append(math.log(4*math.pi*freq))                                         #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.real)))   #Transformation delta(T) to mV
             imag_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.imag)))   #Transformation delta(T) to mV
             freq = (i+1) * decade_mult
@@ -144,7 +143,7 @@ def zero_verification(l, k, rho, cp, window):
         An error is displayed if one of the conditions is not met; otherwise, call up the
         calculation function corresponding to the number of layers chosen.
     """
-    point_calculation_layer2(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, 1.3, 2630, 680, 0.000001, window)
+    # point_calculation_layer2(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, 1.3, 2630, 680, 0.000001, window)
     # point_calculation_layer1(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, window)
     if(l == "" or k == "" or rho == "" or cp == ""):
         graphics.Window.create_error_window(window, 2)
@@ -181,29 +180,25 @@ def zero_verification(l, k, rho, cp, window):
 
 
 
-def init_data_collect_lockin(window):
-    """ Connection to SR860 amplifier
-        If successful, unlock the amplifier's data recovery button, otherwise lock it.
-    """
-    try:
-        global lockin
-        lockin = pyvisa.ResourceManager().open_resource(AMPLIFIER_ID)
-        graphics.Window.create_error_window(window, 4)
-        return 1
-    except:
-        graphics.Window.create_error_window(window, 1)
-        return 0
-
-
-
 def collect_data_lockin(window):
-    """ Recovers data from the amplifier and converts it to the desired order of magnitude.
+    """ Initiate the connection with the amplifier and if it connects, recovers
+        data from the amplifier and converts it to the desired range.
         Then use the function to plot the points of the recovered values.
     """
-    reel = 1000 * (lockin.query("OUTR? DAT1"))                  #IN mV
-    imag = 1000 * (lockin.query("OUTR? DAT2"))                  #IN mV
-    freq = math.log(4 * cmath.pi * lockin.query("OUTP? 16"))      #IN ln(2w)
-    graphics.Window.canvas_draw_data_points(window, reel, imag, freq)
+    if (Lockin.status == 0):
+        try:
+            Lockin.id = pyvisa.ResourceManager().open_resource(AMPLIFIER_ID)
+            graphics.Window.create_error_window(window, 4)
+            Lockin.status = 1
+            return 1
+        except:
+            graphics.Window.create_error_window(window, 1)
+            return 0
+    else:
+        reel = 1000 * float(Lockin.id.query("OUTR? DAT1"))                      #IN mV
+        imag = 1000 * float(Lockin.id.query("OUTR? DAT2"))                      #IN mV
+        freq = math.log(4 * cmath.pi * float(Lockin.id.query("OUTP? 16")))      #IN ln(2w)
+        graphics.Window.canvas_draw_data_points(window, reel, imag, freq)
 
 
 
@@ -214,8 +209,9 @@ def main():
     """
     nu = smp.symbols('nu', real=True)
     window = graphics.Window()
-    init_data_collect_lockin(window)
     window.mainloop()
 
 if __name__ == '__main__':
+    global connexion_status
+    connexion_status = 0
     main()
