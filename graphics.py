@@ -8,7 +8,7 @@ from PIL import Image, ImageTk
 """ CONSTANTS """
 HEIGHT = 700
 HEIGHT_FRAME = 700
-HEIGHT_SCROLLBAR = 1500
+HEIGHT_SCROLLBAR = 1600
 WIDTH = 700
 WIDTH_FRAME = 700
 WIDTH_ENTRY = 12
@@ -32,7 +32,7 @@ DISABLE_COLOR = "light gray"
 
 class Window(tk.Tk):
     """ This is the complete class of software window and error windows. 
-    All functions referring to these windows and to the graph are present in this class.
+        All functions referring to these windows and to the graph are present in this class.
         They can also be called in the 'main.py' file.
     """
     def __init__(self):
@@ -40,7 +40,7 @@ class Window(tk.Tk):
             and graph initialization functions
         """
         super().__init__()
-        self.title('  3-Omega Helping Software')
+        self.title('  3Ꞷ Helping Software')
         try:
             self.iconbitmap('icon.ico')
         except:
@@ -83,11 +83,11 @@ class Window(tk.Tk):
         self.layer_label = tk.Label(self.canvas_frame, text="Layers :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
         self.layer_label.grid(row=0, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
 
-        self.layer1_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 1", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
+        self.layer1_radiobutton = tk.Radiobutton(self.canvas_frame, text="1 Layer", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer1_radiobutton.deselect()
         self.layer1_radiobutton.grid(row=1, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
-        self.layer2_radiobutton = tk.Radiobutton(self.canvas_frame, text="Layer 2", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
+        self.layer2_radiobutton = tk.Radiobutton(self.canvas_frame, text="2 Layers", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer2_radiobutton.deselect()
         self.layer2_radiobutton.grid(row=2, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
@@ -118,14 +118,14 @@ class Window(tk.Tk):
         self.current_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Lenght widgets
-        self.length_label = tk.Label(self.canvas_frame, text="   Length ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.length_label = tk.Label(self.canvas_frame, text="   Length (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.length_label.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.length_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.length_entry.grid(row=7, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Width widgets
-        self.width_label = tk.Label(self.canvas_frame, text="   Width ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.width_label = tk.Label(self.canvas_frame, text="   Width (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
         self.width_label.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.width_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
@@ -148,7 +148,7 @@ class Window(tk.Tk):
         #######################
 
         #Layer 1 Label widget
-        self.layer1_settings_label = tk.Label(self.canvas_frame, text="Layer 1 Settings", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.layer1_settings_label = tk.Label(self.canvas_frame, text="Layer 1 Settings (Thin film)", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
         self.layer1_settings_label.grid(row=11, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         #Thermal Conductivity Layer 1 widgets
@@ -179,49 +179,65 @@ class Window(tk.Tk):
         self.thickness1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
         self.thickness1_entry.grid(row=15, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
+        #Kxy Layer 1 widgets
+        self.kxy1_label = tk.Label(self.canvas_frame, text="   Kxy ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.kxy1_label.grid(row=16, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+
+        self.kxy1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
+        self.kxy1_entry.grid(row=16, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.kxy1_entry.insert(0, "1")
+
         #Separator
         self.separator3_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator3_label.grid(row=16, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator3_label.grid(row=17, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         #######################
         ### LAYER 2 WIDGETS ###
         #######################
 
         #Layer 2 Label widget
-        self.layer2_settings_label = tk.Label(self.canvas_frame, text="Layer 2 Settings", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.layer2_settings_label.grid(row=17, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.layer2_settings_label = tk.Label(self.canvas_frame, text="Layer 2 Settings (Substrate)", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
+        self.layer2_settings_label.grid(row=18, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         #Thermal Conductivity Layer 2 widgets
         self.thermal_cond2_label = tk.Label(self.canvas_frame, text="   Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thermal_cond2_label.grid(row=18, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thermal_cond2_label.grid(row=19, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thermal_cond2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thermal_cond2_entry.grid(row=18, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thermal_cond2_entry.grid(row=19, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Density Layer 2 widgets
         self.density2_label = tk.Label(self.canvas_frame, text="   Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.density2_label.grid(row=19, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.density2_label.grid(row=20, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.density2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.density2_entry.grid(row=19, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.density2_entry.grid(row=20, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Heat Capacity Layer 2 widgets
         self.heat_capa2_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.heat_capa2_label.grid(row=20, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.heat_capa2_label.grid(row=21, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.heat_capa2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.heat_capa2_entry.grid(row=20, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.heat_capa2_entry.grid(row=21, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         #Thickness Layer 2 widgets
         self.thickness2_label = tk.Label(self.canvas_frame, text="   Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thickness2_label.grid(row=21, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thickness2_label.grid(row=22, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thickness2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thickness2_entry.grid(row=21, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thickness2_entry.grid(row=22, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+
+        #Kxy Layer 2 widgets
+        self.kxy2_label = tk.Label(self.canvas_frame, text="   Kxy ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.kxy2_label.grid(row=23, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+
+        self.kxy2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
+        self.kxy2_entry.grid(row=23, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.kxy2_entry.insert(0, "1")
 
         #Separator
         self.separator4_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator4_label.grid(row=22, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator4_label.grid(row=24, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         ################################
         ### SIMULATION MODE SELECTOR ###
@@ -229,25 +245,25 @@ class Window(tk.Tk):
 
         #Simulation Mode Choice Label widget
         self.sim_mode_choice_label = tk.Label(self.canvas_frame, text="Simulation Mode Choice", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.sim_mode_choice_label.grid(row=23, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')    
+        self.sim_mode_choice_label.grid(row=25, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')    
 
         #Select Simulation widgets
         
         self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.first_mode.deselect()
-        self.first_mode.grid(row=24, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.first_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.second_mode.deselect()
-        self.second_mode.grid(row=25, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.second_mode.grid(row=27, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.delock_sim_button())
         self.third_mode.deselect()
-        self.third_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.third_mode.grid(row=28, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         #Separator
         self.separator5_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator5_label.grid(row=27, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator5_label.grid(row=29, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         ################################
         ###       RESULT LABEL       ###
@@ -255,61 +271,51 @@ class Window(tk.Tk):
 
         #Results Title Label widget
         self.result_label = tk.Label(self.canvas_frame, text="Results :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.result_label.grid(row=28, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
+        self.result_label.grid(row=30, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
 
         #Fmin result Label widget
         self.fmin_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmin_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.fmin_result_label.grid(row=29, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.fmin_result_label.grid(row=31, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
         
         #Fmax result Label widget
         self.fmax_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmax_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.fmax_result_label.grid(row=30, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.fmax_result_label.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         #Separator
         self.separator6_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator6_label.grid(row=31, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator6_label.grid(row=33, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         ################################
         ###         BUTTONS          ###
         ################################
 
-        #Simulation Button
-        #self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda: main.point_calculation(11.212, 0.028907, 0.0025, 0.000034/2, 0.297, 1350, 1300, 0.0004, self))
-        # self.simu_button = tk.Button(self.main_frame, text="Start Simulation", font=(FONT, FONT_SIZE), bg=BACKGROUND_SECOND_FRAME, command = lambda:main.point_calculation(float(self.resistance_entry.get()),
-        #                                                                                                                                                            float(self.current_entry.get()),
-        #                                                                                                                                                            float(self.length_entry.get()),
-        #                                                                                                                                                            float(self.width_entry.get())/2,
-        #                                                                                                                                                            float(self.thermal_cond_entry.get()),
-        #                                                                                                                                                            float(self.density_entry.get()),
-        #                                                                                                                                                            float(self.heat_capa_entry.get()),
-        #                                                                                                                                                            float(self.thickness_entry.get()),
-        #           
-        self.simu_button = tk.Button(self.canvas_frame, text="Start Simulation", width=WIDTH_BUTTON ,font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.zero_verification(self.length_entry.get(),
-                                                                                                                                                                            self.thermal_cond1_entry.get(),
-                                                                                                                                                                            self.density1_entry.get(),
-                                                                                                                                                                            self.heat_capa1_entry.get(),
-                                                                                                                                                                            self))
-        self.simu_button.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        #Simulation Button     
+        self.simu_button = tk.Button(self.canvas_frame, text="Start Simulation", width=WIDTH_BUTTON ,font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.parameters_verification(self.length_entry.get(),
+                                                                                                                                                                                                self.thermal_cond2_entry.get(),
+                                                                                                                                                                                                self.density2_entry.get(),
+                                                                                                                                                                                                self.heat_capa2_entry.get(),
+                                                                                                                                                                                                self))
+        self.simu_button.grid(row=34, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         #Lockin Button
         self.lockin_button = tk.Button(self.canvas_frame, text="Lockin Collect Data", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.collect_data_lockin(self))
-        self.lockin_button.grid(row=32, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.lockin_button.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
 
         self.separator7_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator7_label.grid(row=33, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator7_label.grid(row=35, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         ################################
         ###        COPYRIGHT         ###
         ################################
 
         self.copyright_label = tk.Label(self.canvas_frame, text=COPYRIGHT, font=(FONT, FONT_SIZE-4, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.copyright_label.grid(row=34, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.copyright_label.grid(row=36, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         try:
             self.img = ImageTk.PhotoImage(Image.open("IEMN_logo.png"))
             self.panel = tk.Label(self.canvas_frame, image=self.img, background=BACKGROUND_MAIN_FRAME)
             self.panel.photo = self.img
-            self.panel.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+            self.panel.grid(row=36, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         except:
             print("Couldn't load the IEMN picture")
 
@@ -320,8 +326,6 @@ class Window(tk.Tk):
         """
         plt.figure(figsize=(6,6)) 
         plt.subplot(111)
-        plt.xlabel("ln(2w)")
-        plt.ylabel("Voltage 3w (mV)")
 
 
 
@@ -332,7 +336,9 @@ class Window(tk.Tk):
         self.figure_one = plt.plot(freq, reel, color ='Blue', label ='Reel')
         self.figure_two = plt.plot(freq, imag, color ='Green', label ='Imag')
         reel_legend = mpatches.Patch(color='Blue', label='Reel')
-        imag_legend = mpatches.Patch(color='Green', label='Imaginary')   
+        imag_legend = mpatches.Patch(color='Green', label='Imaginary')
+        plt.xlabel("ln(2w)")
+        plt.ylabel("Voltage 3w (mV)")
         plt.legend(handles = [reel_legend, imag_legend])
         plt.show()
 
@@ -352,7 +358,6 @@ class Window(tk.Tk):
         """
         self.fmin_plot = plt.axvline(x=fmin, color = 'gray', linestyle='--')
         self.fmax_plot = plt.axvline(x=fmax, color = 'gray', linestyle='--')
-        plt.show()
 
 
 
@@ -395,20 +400,23 @@ class Window(tk.Tk):
             self.width_entry.config(state= "normal")
             self.tcr_entry.config(state= "normal")
 
-            self.thermal_cond1_entry.config(state= "normal")
-            self.density1_entry.config(state= "normal")
-            self.heat_capa1_entry.config(state= "normal")
-            self.thickness1_entry.config(state= "normal")
+            self.thermal_cond1_entry.config(state= "disabled")
+            self.density1_entry.config(state= "disabled")
+            self.heat_capa1_entry.config(state= "disabled")
+            self.thickness1_entry.config(state= "disabled")
+            self.kxy1_entry.config(state="disabled")
 
-            self.thermal_cond2_entry.delete(0, 'end')
-            self.density2_entry.delete(0, 'end')
-            self.heat_capa2_entry.delete(0, 'end')
-            self.thickness2_entry.delete(0, 'end')
+            # self.thermal_cond2_entry.delete(0, 'end')
+            # self.density2_entry.delete(0, 'end')
+            # self.heat_capa2_entry.delete(0, 'end')
+            # self.thickness2_entry.delete(0, 'end')
+            # self.kxy2_entry.delete(0, 'end')
 
-            self.thermal_cond2_entry.config(state= "disabled")
-            self.density2_entry.config(state= "disabled")
-            self.heat_capa2_entry.config(state= "disabled")
-            self.thickness2_entry.config(state= "disabled")
+            self.thermal_cond2_entry.config(state= "normal")
+            self.density2_entry.config(state= "normal")
+            self.heat_capa2_entry.config(state= "normal")
+            self.thickness2_entry.config(state= "normal")
+            self.kxy2_entry.config(state= "normal")
 
             self.delock_sim_button()
 
@@ -424,11 +432,13 @@ class Window(tk.Tk):
             self.density1_entry.config(state= "normal")
             self.heat_capa1_entry.config(state= "normal")
             self.thickness1_entry.config(state= "normal")
+            self.kxy1_entry.config(state= "normal")
 
             self.thermal_cond2_entry.config(state= "normal")
             self.density2_entry.config(state= "normal")
             self.heat_capa2_entry.config(state= "normal")
             self.thickness2_entry.config(state= "normal")
+            self.kxy2_entry.config(state= "normal")
 
             self.delock_sim_button()
 
@@ -444,11 +454,13 @@ class Window(tk.Tk):
             self.density1_entry.config(state= "disabled")
             self.heat_capa1_entry.config(state= "disabled")
             self.thickness1_entry.config(state= "disabled")
+            self.kxy1_entry.config(state= "disabled")
 
             self.thermal_cond2_entry.config(state= "disabled")
             self.density2_entry.config(state= "disabled")
             self.heat_capa2_entry.config(state= "disabled")
             self.thickness2_entry.config(state= "disabled")
+            self.kxy2_entry.config(state= "disabled")
 
             self.simu_button.config(state= "disabled")
 
@@ -488,7 +500,6 @@ class Window(tk.Tk):
         error_label.pack(side=tk.LEFT, padx=0, pady=0, fill = tk.BOTH, expand=True)
         if (error_level == 1):
             self.var_status.set("Status : Cannot connect to the lockin amplifier")
-            # self.lockin_button.config(state= "disabled")
         if (error_level == 2):
             self.var_status.set("Status : Necessary parameters empty")
         if (error_level == 3):
