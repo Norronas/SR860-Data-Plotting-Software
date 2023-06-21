@@ -43,18 +43,12 @@ You can also press the *"Lockin Collect Data"* button to retrieve data from the 
 This part of the code performs all the calculations required for the application to function correctly. 
 It also provides the link between the calculations made and their display, thanks to the graphics section that we'll explain next. 
 It can also communicate with the amplifier and retrieve data from it.
-The integration formulas named *"function"* in the file are very long because, ν being the variable of integration, we can't call on other equations. 
-Therefore, we are obliged to replace each variable one by one by its calculation, hence the length of certain lines of code.
-The equations used are commented on for a better understanding.
-
 
 ### Graphic file
 
 The graphical part of the code is made up of a single class, the window class, containing each widget and its display. 
 Functions are provided to display the results curves using the matplotlib library. 
-If you want to add widgets to the graphics, you need to change the value of *"row "* and *"column "* so that the widgets follow each other. 
-If you add a widget between two, don't forget to change the value of the following ones, otherwise they'll overwrite the new one.
-
+If you want to add widgets to the graphics, You must add the *"self.row += 1"* line of code so that the following widgets are not in the wrong order
 
 ### Setup file 
 

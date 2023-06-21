@@ -7,6 +7,7 @@ build_exe_options = {
     "zip_include_packages": ["encodings", "PySide6", "numpy"],
 }
 
+# Increases the program's recursion limit.
 sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
 # base="Win32GUI" should be used only for Windows GUI app

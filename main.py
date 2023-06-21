@@ -52,21 +52,20 @@ def point_calculation_1layer(R, I, l, b, k, rho, cp, T, kxy, window):
     prms = (R * I**2)/l
     constante = (-prms/(cmath.pi*k))
     alpha = (k/(rho * cp)) 
+    omega = 4 * cmath.pi * freq
+    B2 = lambda nu : (cmath.sqrt((kxy*(nu**2))+((complex(0,1)*omega)/alpha)))
+    if (int(graphics.Window.get_value_mode(window)) == 0):
+        A2 = lambda nu : -1
+    if (int(graphics.Window.get_value_mode(window)) == 1):
+        A2 = lambda nu : (-cmath.tanh(B2(nu)*2))
+    if (int(graphics.Window.get_value_mode(window)) == 2):
+        A2 = lambda nu : (-1/(cmath.tanh(B2(nu)*T)))
+    fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*B2(nu)*A2(nu)))
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
-            
-            if (int(graphics.Window.get_value_mode(window)) == 0):
-                A1 = (-1)
-                fonction = lambda nu : ((1/(A1*(cmath.sqrt((kxy*(nu**2))+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
-                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
-            if (int(graphics.Window.get_value_mode(window)) == 1):
-                # A1 = (-cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T))
-                fonction = lambda nu : ((1/((-cmath.tanh((cmath.sqrt((kxy*(nu**2))+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T))*(cmath.sqrt((kxy*(nu**2))+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
-                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
-            if (int(graphics.Window.get_value_mode(window)) == 2):
-                # A1 = (-1/(cmath.tanh((cmath.sqrt((nu**2)+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))
-                fonction = lambda nu : ((1/((-1/(cmath.tanh((cmath.sqrt((kxy*(nu**2))+((complex(0,1) * 4 * cmath.pi * freq)/alpha))) * T)))*(cmath.sqrt((kxy*(nu**2))+((complex(0,1) * 4 * cmath.pi * freq)/alpha)))))*((cmath.sin(nu*b)**2)/(b*nu)**2))
-                result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
+
+            omega = 4 * cmath.pi * freq
+            result = constante * complex_quadrature(fonction, 0, MAX_INTEGRATE)
 
             frequency_list.append(math.log(4*math.pi*freq))                                         #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.real)))   #Transformation delta(T) to mV
@@ -96,36 +95,26 @@ def point_calculation_2layers(R, I, l, b, k1, rho1, cp1, T1, kxy1, k2, rho2, cp2
     alpha2 = (k2/(rho2 * cp2)) 
     omega = (4*cmath.pi*freq)
     prms = (R * I**2)/l
-    constante = (prms/(cmath.pi*k1))             
-
-    # B1 = lambda nu : (cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*omega/alpha1)))
-    # B2 = lambda nu : (cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*omega/alpha2)))
-    # phi1 = B1 * T1
-    # phi2 = B2 * T2 
-    # var1 = ((k2*A2*B2/(k1*B1))-cmath.tanh(phi1))
-    # var2 = (k2*A2*B2*cmath.tanh(phi1)/(k1*B1))
-    # A1 = (var1/(1-var2))
-    # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*B1*A1))
+    constante = (-prms/(cmath.pi*k1))             
+    B1 = lambda nu : (cmath.sqrt((kxy1*(nu**2))+((complex(0,1)*omega)/alpha1)))
+    B2 = lambda nu : (cmath.sqrt((kxy2*(nu**2))+((complex(0,1)*omega)/alpha2)))
+    if (int(graphics.Window.get_value_mode(window)) == 0):
+        A2 = lambda nu : -1
+    if (int(graphics.Window.get_value_mode(window)) == 1):
+        A2 = lambda nu : (-cmath.tanh(B2(nu)*T2))
+    if (int(graphics.Window.get_value_mode(window)) == 2):
+        A2 = lambda nu : (-1/(cmath.tanh(B2(nu)*T2)))
+    phi1 = lambda nu : B1(nu) * T1
+    phi2 = lambda nu : B2(nu) * T2 
+    var1 = lambda nu : (((k2*A2(nu)*B2(nu))/(k1*B1(nu)))-cmath.tanh(phi1(nu)))
+    var2 = lambda nu : ((k2*A2(nu)*B2(nu)*cmath.tanh(phi1(nu)))/(k1*B1(nu)))
+    A1 = lambda nu : (var1(nu)/(1-var2(nu)))
+    fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*B1(nu)*A1(nu)))
     while(freq <= MAX_FREQUENCY):
         for i in range (1,DECADE):
-            if (int(graphics.Window.get_value_mode(window)) == 0):
-                A2 = -1
-                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))*(((k2*A2*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*A2*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = constante * complex_quadrature(fonction, 1e-6, MAX_INTEGRATE)
-            if (int(graphics.Window.get_value_mode(window)) == 1):
-                # A2 = lambda nu : (-cmath.tanh(B2*T2))
-                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = constante * complex_quadrature(fonction, 1e-6, MAX_INTEGRATE)
-            if (int(graphics.Window.get_value_mode(window)) == 2):
-                # A2 = lambda nu : (-1/(-cmath.tanh(B2*T2)))
-                fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((kxy2*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((kxy1*(nu**2))+(complex(0,1)*(4*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*(2*cmath.pi*freq)/alpha1)))))))))
-                # fonction = lambda nu : (((cmath.sin(nu*b))**2)/(((nu*b)**2)*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))*(((k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1))/(1-(k2*(-1/(-cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*T2)))*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha2)))*cmath.tanh((cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1))) * T1)/(k1*(cmath.sqrt((1*(nu**2))+(complex(0,1)*omega/alpha1)))))))))
-                result = constante * complex_quadrature(fonction, 1e-6, MAX_INTEGRATE)
+
+            omega = (4*cmath.pi*freq)
+            result = constante * complex_quadrature(fonction, 1e-6, MAX_INTEGRATE)
 
             frequency_list.append(math.log(4*math.pi*freq))                                         #Transformation Hz to ln(2w)
             real_result_list.append(1000*(0.5*R*I*(float(window.tcr_entry.get()))*(result.real)))   #Transformation delta(T) to mV
@@ -146,9 +135,8 @@ def parameters_verification(l, k, rho, cp, window):
         An error is displayed if one of the conditions is not met; otherwise, call up the
         calculation function corresponding to the number of layers chosen.
     """
-    # (R, I, l, b, k1, rho1, cp1, T1, kxy1, k2, rho2, cp2, T2, kxy2, window):
-    # point_calculation_layer2(61, 0.03, 0.0025, 0.000034/2, 0.4, 3950, 880, 250e-9, 1, 150, 2330, 720, 750e-6, 1, window)
-    # point_calculation_layer1(61, 0.03, 0.0025, 0.000034/2, 150, 2330, 720, 0.000750, 1, window)
+    # point_calculation_2layers(61, 0.03, 1.5e-3, (3e-6)/2, 14, 3950, 880, 250e-9, 1, 150, 2330, 720, 750e-6, 1, window)
+    # point_calculation_1layer(61, 0.03, 1.5e-3, (3e-6)/2, 150, 2330, 720, 750e-6, 1, window)
     if(l == "" or k == "" or rho == "" or cp == ""):
         graphics.Window.create_error_window(window, 2)
         return 0
@@ -157,7 +145,6 @@ def parameters_verification(l, k, rho, cp, window):
         return 0
     else:
         if (int(graphics.Window.get_value_layer(window)) == 1):
-            print("LAYER 1")
             point_calculation_1layer(float(window.resistance_entry.get()),
                                     float(window.current_entry.get()),
                                     float(window.length_entry.get()),
@@ -170,7 +157,6 @@ def parameters_verification(l, k, rho, cp, window):
                                     window)
             
         elif (int(graphics.Window.get_value_layer(window)) == 2):
-            print("LAYER 2")
             point_calculation_2layers(float(window.resistance_entry.get()),
                                     float(window.current_entry.get()),
                                     float(window.length_entry.get()),
@@ -187,22 +173,6 @@ def parameters_verification(l, k, rho, cp, window):
                                     float(window.kxy2_entry.get()),
                                     window)
             
-            # point_calculation_layer2(float(window.resistance_entry.get()),
-            #                         float(window.current_entry.get()),
-            #                         float(window.length_entry.get()),
-            #                         float(window.width_entry.get())/2,
-            #                         float(window.thermal_cond2_entry.get()),
-            #                         float(window.density2_entry.get()),
-            #                         float(window.heat_capa2_entry.get()),
-            #                         float(window.thickness2_entry.get()),
-            #                         float(window.kxy2_entry.get()),
-            #                         float(window.thermal_cond1_entry.get()),
-            #                         float(window.density1_entry.get()),
-            #                         float(window.heat_capa1_entry.get()),
-            #                         float(window.thickness1_entry.get()),
-            #                         float(window.kxy1_entry.get()),
-            #                         window)
-
 
 
 def collect_data_lockin(window):

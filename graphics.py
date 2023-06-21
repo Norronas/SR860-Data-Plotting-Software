@@ -63,14 +63,15 @@ class Window(tk.Tk):
         self.var_fmax_result = tk.StringVar()
         self.var_fmax_result.set("   Result Fmax :")
         self.var_status = tk.StringVar()
+        self.row = 0
         
         #Canvas & Scollbar
         self.canvas_und = tk.Canvas(self, width=WIDTH_FRAME, height=HEIGHT_FRAME, scrollregion=(0,0,HEIGHT_SCROLLBAR,HEIGHT_SCROLLBAR), background=BACKGROUND_MAIN_FRAME)
         self.canvas_und.bind_all("<MouseWheel>", self._on_mousewheel)
         self.scrollbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=self.canvas_und.yview)
         self.canvas_und.configure(yscrollcommand = self.scrollbar.set)
-        self.scrollbar.grid(row=0,column=1,sticky='nsew')
-        self.canvas_und.grid(row=0,column=0,sticky='nwes')
+        self.scrollbar.grid(row=self.row,column=1,sticky='nsew')
+        self.canvas_und.grid(row=self.row,column=0,sticky='nwes')
         self.canvas_frame = tk.Frame(self.canvas_und, width=WIDTH_FRAME, height=3000, borderwidth=BORDERWIDTH, relief=RELIEF, background=BACKGROUND_MAIN_FRAME)
         self.canvas_frame.grid_rowconfigure(0, weight=1)
         self.canvas_frame.grid_rowconfigure(MAX_ROW, weight=1)
@@ -81,19 +82,23 @@ class Window(tk.Tk):
 
         #Layers widgets
         self.layer_label = tk.Label(self.canvas_frame, text="Layers :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.layer_label.grid(row=0, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
+        self.layer_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='sw')
+        self.row += 1
 
         self.layer1_radiobutton = tk.Radiobutton(self.canvas_frame, text="1 Layer", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer1_radiobutton.deselect()
-        self.layer1_radiobutton.grid(row=1, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.layer1_radiobutton.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         self.layer2_radiobutton = tk.Radiobutton(self.canvas_frame, text="2 Layers", width=WIDTH_RADIOBUTTON_LAYER, variable = self.layer_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.layer_lock())
         self.layer2_radiobutton.deselect()
-        self.layer2_radiobutton.grid(row=2, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.layer2_radiobutton.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Separator
         self.separator1_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator1_label.grid(row=3, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #######################
         ### GENERAL WIDGETS ###
@@ -101,47 +106,54 @@ class Window(tk.Tk):
 
         #General Label widget
         self.general_settings_label = tk.Label(self.canvas_frame, text="General Settings", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.general_settings_label.grid(row=4, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.general_settings_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Resistance widgets
         self.resistance_label = tk.Label(self.canvas_frame, text="   Resistance (Ω)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.resistance_label.grid(row=5, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.resistance_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
 
         self.resistance_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.resistance_entry.grid(row=5, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.resistance_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Current widgets
         self.current_label = tk.Label(self.canvas_frame, text="   Current (A)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.current_label.grid(row=6, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.current_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.current_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.current_entry.grid(row=6, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.current_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Lenght widgets
         self.length_label = tk.Label(self.canvas_frame, text="   Length (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.length_label.grid(row=7, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.length_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.length_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.length_entry.grid(row=7, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.length_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Width widgets
         self.width_label = tk.Label(self.canvas_frame, text="   Width (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.width_label.grid(row=8, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.width_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.width_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.width_entry.grid(row=8, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.width_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #TCR widgets
         self.tcr_label = tk.Label(self.canvas_frame, text="   TCR ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.tcr_label.grid(row=9, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.tcr_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.tcr_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.tcr_entry.grid(row=9, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.tcr_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         self.tcr_entry.insert(0, "0.003")
+        self.row += 1
 
         #Separator
         self.separator2_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator2_label.grid(row=10, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #######################
         ### LAYER 1 WIDGETS ###
@@ -149,47 +161,54 @@ class Window(tk.Tk):
 
         #Layer 1 Label widget
         self.layer1_settings_label = tk.Label(self.canvas_frame, text="Layer 1 Settings (Thin film)", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.layer1_settings_label.grid(row=11, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.layer1_settings_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Thermal Conductivity Layer 1 widgets
         self.thermal_cond1_label = tk.Label(self.canvas_frame, text="   Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thermal_cond1_label.grid(row=12, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thermal_cond1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thermal_cond1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thermal_cond1_entry.grid(row=12, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thermal_cond1_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Density Layer 1 widgets
         self.density1_label = tk.Label(self.canvas_frame, text="   Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.density1_label.grid(row=13, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.density1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.density1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.density1_entry.grid(row=13, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.density1_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Heat Capacity Layer 1 widgets
-        self.heat_capa1_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.heat_capa1_label.grid(row=14, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.heat_capa1_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.heat_capa1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.heat_capa1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.heat_capa1_entry.grid(row=14, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.heat_capa1_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Thickness Layer 1 widgets
         self.thickness1_label = tk.Label(self.canvas_frame, text="   Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thickness1_label.grid(row=15, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thickness1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thickness1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thickness1_entry.grid(row=15, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thickness1_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Kxy Layer 1 widgets
         self.kxy1_label = tk.Label(self.canvas_frame, text="   Kxy ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.kxy1_label.grid(row=16, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.kxy1_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.kxy1_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.kxy1_entry.grid(row=16, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.kxy1_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         self.kxy1_entry.insert(0, "1")
+        self.row += 1
 
         #Separator
         self.separator3_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator3_label.grid(row=17, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator3_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #######################
         ### LAYER 2 WIDGETS ###
@@ -197,47 +216,54 @@ class Window(tk.Tk):
 
         #Layer 2 Label widget
         self.layer2_settings_label = tk.Label(self.canvas_frame, text="Layer 2 Settings (Substrate)", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.layer2_settings_label.grid(row=18, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.layer2_settings_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Thermal Conductivity Layer 2 widgets
         self.thermal_cond2_label = tk.Label(self.canvas_frame, text="   Thermal Conductivity (W/m.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thermal_cond2_label.grid(row=19, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thermal_cond2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thermal_cond2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thermal_cond2_entry.grid(row=19, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thermal_cond2_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Density Layer 2 widgets
         self.density2_label = tk.Label(self.canvas_frame, text="   Density (Kg/m3)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.density2_label.grid(row=20, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.density2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.density2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.density2_entry.grid(row=20, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.density2_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Heat Capacity Layer 2 widgets
-        self.heat_capa2_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/Kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.heat_capa2_label.grid(row=21, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.heat_capa2_label = tk.Label(self.canvas_frame, text="   Heat Capacity (J/kg.K)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
+        self.heat_capa2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.heat_capa2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.heat_capa2_entry.grid(row=21, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.heat_capa2_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Thickness Layer 2 widgets
         self.thickness2_label = tk.Label(self.canvas_frame, text="   Thickness (m)", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.thickness2_label.grid(row=22, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.thickness2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.thickness2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.thickness2_entry.grid(row=22, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.thickness2_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
         #Kxy Layer 2 widgets
         self.kxy2_label = tk.Label(self.canvas_frame, text="   Kxy ()", font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.kxy2_label.grid(row=23, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.kxy2_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         self.kxy2_entry = tk.Entry(self.canvas_frame, font=(FONT, FONT_SIZE), bg=BACKGROUND_ENTRY, width=WIDTH_ENTRY, disabledbackground=DISABLE_COLOR)
-        self.kxy2_entry.grid(row=23, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.kxy2_entry.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
         self.kxy2_entry.insert(0, "1")
+        self.row += 1
 
         #Separator
         self.separator4_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator4_label.grid(row=24, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator4_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         ################################
         ### SIMULATION MODE SELECTOR ###
@@ -245,25 +271,30 @@ class Window(tk.Tk):
 
         #Simulation Mode Choice Label widget
         self.sim_mode_choice_label = tk.Label(self.canvas_frame, text="Simulation Mode Choice", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.sim_mode_choice_label.grid(row=25, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')    
+        self.sim_mode_choice_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
+        self.row += 1  
 
         #Select Simulation widgets
         
         self.first_mode = tk.Radiobutton(self.canvas_frame, text="Semi-Infinite Substrate", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 0, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.first_mode.deselect()
-        self.first_mode.grid(row=26, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.first_mode.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         self.second_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Adiabaticisothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 1, bg=BACKGROUND_BUTTON,  indicatoron=0, command=lambda:self.delock_sim_button())
         self.second_mode.deselect()
-        self.second_mode.grid(row=27, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.second_mode.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         self.third_mode = tk.Radiobutton(self.canvas_frame, text="Finite Substrate Isothermal", width=WIDTH_RADIOBUTTON_MODE, variable = self.mode_var, font=(FONT, FONT_SIZE), value = 2, bg=BACKGROUND_BUTTON, indicatoron=0, command=lambda:self.delock_sim_button())
         self.third_mode.deselect()
-        self.third_mode.grid(row=28, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.third_mode.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Separator
         self.separator5_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator5_label.grid(row=29, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator5_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         ################################
         ###       RESULT LABEL       ###
@@ -271,19 +302,23 @@ class Window(tk.Tk):
 
         #Results Title Label widget
         self.result_label = tk.Label(self.canvas_frame, text="Results :", font=(FONT, FONT_SIZE, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.result_label.grid(row=30, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
+        self.result_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')  
+        self.row += 1
 
         #Fmin result Label widget
         self.fmin_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmin_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.fmin_result_label.grid(row=31, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.fmin_result_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
         
         #Fmax result Label widget
         self.fmax_result_label = tk.Label(self.canvas_frame, textvariable=self.var_fmax_result, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.fmax_result_label.grid(row=32, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.fmax_result_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         #Separator
         self.separator6_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator6_label.grid(row=33, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator6_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         ################################
         ###         BUTTONS          ###
@@ -295,27 +330,31 @@ class Window(tk.Tk):
                                                                                                                                                                                                 self.density2_entry.get(),
                                                                                                                                                                                                 self.heat_capa2_entry.get(),
                                                                                                                                                                                                 self))
-        self.simu_button.grid(row=34, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.simu_button.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         #Lockin Button
         self.lockin_button = tk.Button(self.canvas_frame, text="Lockin Collect Data", width=WIDTH_BUTTON-20, font=(FONT, FONT_SIZE), bg=BACKGROUND_BUTTON, command = lambda:main.collect_data_lockin(self))
-        self.lockin_button.grid(row=34, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.lockin_button.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+        self.row += 1
 
+        #Separator
         self.separator7_label = tk.Label(self.canvas_frame, text=SEPARATOR, font=(FONT, FONT_SIZE), bg=BACKGROUND_MAIN_FRAME)
-        self.separator7_label.grid(row=35, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.separator7_label.grid(row=self.row, column=0, padx=PADX_WIDGETS,pady=PADY_WIDGETS, sticky='nw')
+        self.row += 1
 
         ################################
         ###        COPYRIGHT         ###
         ################################
 
         self.copyright_label = tk.Label(self.canvas_frame, text=COPYRIGHT, font=(FONT, FONT_SIZE-4, 'bold'), bg=BACKGROUND_MAIN_FRAME)
-        self.copyright_label.grid(row=36, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
+        self.copyright_label.grid(row=self.row, column=0, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='nw')
 
         try:
             self.img = ImageTk.PhotoImage(Image.open("IEMN_logo.png"))
             self.panel = tk.Label(self.canvas_frame, image=self.img, background=BACKGROUND_MAIN_FRAME)
             self.panel.photo = self.img
-            self.panel.grid(row=36, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+            self.panel.grid(row=self.row, column=1, padx=PADX_WIDGETS, pady=PADY_WIDGETS, sticky='ne')
+            self.row += 1
         except:
             print("Couldn't load the IEMN picture")
 
@@ -405,12 +444,6 @@ class Window(tk.Tk):
             self.heat_capa1_entry.config(state= "disabled")
             self.thickness1_entry.config(state= "disabled")
             self.kxy1_entry.config(state="disabled")
-
-            # self.thermal_cond2_entry.delete(0, 'end')
-            # self.density2_entry.delete(0, 'end')
-            # self.heat_capa2_entry.delete(0, 'end')
-            # self.thickness2_entry.delete(0, 'end')
-            # self.kxy2_entry.delete(0, 'end')
 
             self.thermal_cond2_entry.config(state= "normal")
             self.density2_entry.config(state= "normal")
